@@ -5,23 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>📁 مستعرض الملفات</title>
 
-<!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<!-- Highlight.js -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-
-<!-- Marked.js -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
-/* ==================== المتغيرات ==================== */
 :root {
     --primary: #6366f1;
     --primary-dark: #4f46e5;
@@ -30,23 +22,18 @@
     --warning: #f59e0b;
     --danger: #ef4444;
     --info: #3b82f6;
-    
     --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --card-bg: rgba(255, 255, 255, 0.97);
     --card-border: rgba(255, 255, 255, 0.3);
-    
     --text-primary: #1f2937;
     --text-secondary: #6b7280;
     --text-muted: #9ca3af;
-    
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
     --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
-    
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 20px;
-    
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -59,7 +46,6 @@
     --bg-gradient: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
 }
 
-/* ==================== إعادة التعيين ==================== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
@@ -69,11 +55,9 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
-    position: relative;
     line-height: 1.6;
 }
 
-/* ==================== الخلفية ==================== */
 .bg-animation {
     position: fixed;
     inset: 0;
@@ -99,7 +83,6 @@ body {
     66% { transform: translate(-50px, 50px) scale(0.9); }
 }
 
-/* ==================== زر الثيم ==================== */
 .theme-toggle {
     position: fixed;
     top: 20px;
@@ -121,11 +104,8 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-.theme-toggle:hover {
-    transform: rotate(180deg) scale(1.1);
-}
+.theme-toggle:hover { transform: rotate(180deg) scale(1.1); }
 
-/* ==================== الحاوية ==================== */
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -134,7 +114,6 @@ body {
     z-index: 1;
 }
 
-/* ==================== الهيدر ==================== */
 .header {
     text-align: center;
     padding: 30px 20px;
@@ -158,10 +137,55 @@ body {
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-.subtitle {
-    font-size: 1rem;
-    opacity: 0.9;
+.subtitle { font-size: 1rem; opacity: 0.9; }
+
+/* ==================== بطاقة التشخيص ==================== */
+.debug-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-md);
+    padding: 15px 20px;
+    margin: 15px auto;
+    max-width: 700px;
+    color: white;
+    font-size: 0.9rem;
+    text-align: right;
 }
+
+.debug-card h4 {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+}
+
+.debug-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.debug-item:last-child { border-bottom: none; }
+
+.debug-label { opacity: 0.8; }
+
+.debug-value {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    direction: ltr;
+    font-size: 0.85rem;
+}
+
+.status-ok { color: #10b981; }
+.status-error { color: #ef4444; }
+.status-warn { color: #f59e0b; }
 
 .repo-badge {
     display: inline-flex;
@@ -182,7 +206,6 @@ body {
     font-weight: 600;
 }
 
-/* ==================== البطاقة الرئيسية ==================== */
 .main-card {
     background: var(--card-bg);
     backdrop-filter: blur(20px);
@@ -191,9 +214,9 @@ body {
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--card-border);
     animation: fadeInUp 0.8s ease;
+    margin-top: 20px;
 }
 
-/* ==================== شريط الأدوات ==================== */
 .toolbar {
     display: flex;
     justify-content: space-between;
@@ -238,20 +261,11 @@ body {
     font-weight: 600;
 }
 
-.breadcrumb-separator {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
+.breadcrumb-separator { color: var(--text-muted); }
 
-.tools {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+.tools { display: flex; align-items: center; gap: 10px; }
 
-.search-box {
-    position: relative;
-}
+.search-box { position: relative; }
 
 .search-box i {
     position: absolute;
@@ -272,9 +286,7 @@ body {
     transition: var(--transition);
 }
 
-[data-theme="dark"] .search-box input {
-    background: rgba(0, 0, 0, 0.3);
-}
+[data-theme="dark"] .search-box input { background: rgba(0, 0, 0, 0.3); }
 
 .search-box input:focus {
     outline: none;
@@ -289,9 +301,7 @@ body {
     padding: 3px;
 }
 
-[data-theme="dark"] .view-toggle {
-    background: rgba(255, 255, 255, 0.05);
-}
+[data-theme="dark"] .view-toggle { background: rgba(255, 255, 255, 0.05); }
 
 .view-btn {
     padding: 6px 10px;
@@ -303,10 +313,7 @@ body {
     transition: var(--transition);
 }
 
-.view-btn.active {
-    background: var(--primary);
-    color: white;
-}
+.view-btn.active { background: var(--primary); color: white; }
 
 .btn-icon {
     width: 38px;
@@ -323,16 +330,10 @@ body {
     justify-content: center;
 }
 
-[data-theme="dark"] .btn-icon {
-    background: rgba(255, 255, 255, 0.05);
-}
+[data-theme="dark"] .btn-icon { background: rgba(255, 255, 255, 0.05); }
 
-.btn-icon:hover {
-    background: var(--primary);
-    color: white;
-}
+.btn-icon:hover { background: var(--primary); color: white; }
 
-/* ==================== معلومات المسار ==================== */
 .path-info {
     display: flex;
     justify-content: space-between;
@@ -353,14 +354,9 @@ body {
     font-size: 0.9rem;
 }
 
-.separator {
-    color: var(--text-muted);
-}
+.separator { color: var(--text-muted); }
 
-.path-actions {
-    display: flex;
-    gap: 8px;
-}
+.path-actions { display: flex; gap: 8px; }
 
 .btn-sm {
     padding: 6px 12px;
@@ -377,19 +373,11 @@ body {
     transition: var(--transition);
 }
 
-[data-theme="dark"] .btn-sm {
-    background: rgba(255, 255, 255, 0.05);
-}
+[data-theme="dark"] .btn-sm { background: rgba(255, 255, 255, 0.05); }
 
-.btn-sm:hover {
-    background: var(--primary);
-    color: white;
-}
+.btn-sm:hover { background: var(--primary); color: white; }
 
-/* ==================== قائمة الملفات ==================== */
-.files-container {
-    min-height: 300px;
-}
+.files-container { min-height: 300px; }
 
 .files-list {
     display: flex;
@@ -415,9 +403,7 @@ body {
     transition: var(--transition);
 }
 
-[data-theme="dark"] .file-item {
-    background: rgba(0, 0, 0, 0.2);
-}
+[data-theme="dark"] .file-item { background: rgba(0, 0, 0, 0.2); }
 
 .file-item:hover {
     border-color: var(--primary);
@@ -457,10 +443,7 @@ body {
 .file-icon.html { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
 .file-icon.archive { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
 
-.file-info {
-    flex: 1;
-    min-width: 0;
-}
+.file-info { flex: 1; min-width: 0; }
 
 .file-name {
     font-weight: 600;
@@ -486,13 +469,8 @@ body {
     transition: var(--transition);
 }
 
-.file-item:hover .file-actions {
-    opacity: 1;
-}
-
-.files-list.grid-view .file-actions {
-    opacity: 1;
-}
+.file-item:hover .file-actions { opacity: 1; }
+.files-list.grid-view .file-actions { opacity: 1; }
 
 .file-action-btn {
     width: 32px;
@@ -508,12 +486,8 @@ body {
     justify-content: center;
 }
 
-.file-action-btn:hover {
-    background: var(--primary);
-    color: white;
-}
+.file-action-btn:hover { background: var(--primary); color: white; }
 
-/* ==================== التحميل والحالات ==================== */
 .loading {
     text-align: center;
     padding: 60px 20px;
@@ -531,35 +505,66 @@ body {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.empty-state {
+.empty-state, .error-state, .info-state {
     text-align: center;
     padding: 60px 20px;
-    color: var(--text-muted);
 }
 
-.empty-state i {
+.empty-state { color: var(--text-muted); }
+.error-state { color: var(--danger); }
+.info-state { color: var(--info); }
+
+.empty-state i, .error-state i, .info-state i {
     font-size: 4rem;
     margin-bottom: 20px;
     opacity: 0.3;
 }
 
-.empty-state h3 {
+.error-state i { opacity: 0.5; }
+
+.empty-state h3, .error-state h3, .info-state h3 {
     margin-bottom: 10px;
-    color: var(--text-secondary);
 }
 
-.error-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--danger);
+.error-state h3 { color: var(--danger); }
+.info-state h3 { color: var(--info); }
+
+.help-box {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+    text-align: right;
+    color: var(--text-primary);
 }
 
-.error-state i {
-    font-size: 3rem;
-    margin-bottom: 15px;
+.help-box h4 {
+    margin-bottom: 10px;
+    color: var(--info);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* ==================== معاينة الملف ==================== */
+.help-box ol {
+    padding-right: 20px;
+    line-height: 2;
+}
+
+.help-box code {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    direction: ltr;
+    display: inline-block;
+}
+
+[data-theme="dark"] .help-box code { background: rgba(255, 255, 255, 0.1); }
+
 .file-preview {
     position: fixed;
     inset: 0;
@@ -571,9 +576,7 @@ body {
     animation: slideIn 0.3s ease;
 }
 
-.file-preview.active {
-    display: flex;
-}
+.file-preview.active { display: flex; }
 
 @keyframes slideIn {
     from { opacity: 0; transform: translateY(20px); }
@@ -599,14 +602,9 @@ body {
     flex: 1;
 }
 
-.preview-title i {
-    font-size: 1.8rem;
-    color: var(--primary);
-}
+.preview-title i { font-size: 1.8rem; color: var(--primary); }
 
-.preview-title-info {
-    min-width: 0;
-}
+.preview-title-info { min-width: 0; }
 
 .preview-title h3 {
     color: var(--text-primary);
@@ -616,28 +614,19 @@ body {
     white-space: nowrap;
 }
 
-.preview-title p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
+.preview-title p { font-size: 0.85rem; color: var(--text-muted); }
 
-.preview-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
+.preview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .preview-mode-toggle {
     display: flex;
     background: rgba(0, 0, 0, 0.05);
     border-radius: var(--radius-sm);
     padding: 3px;
-    margin-left: 10px;
+    margin-right: 10px;
 }
 
-[data-theme="dark"] .preview-mode-toggle {
-    background: rgba(255, 255, 255, 0.05);
-}
+[data-theme="dark"] .preview-mode-toggle { background: rgba(255, 255, 255, 0.05); }
 
 .mode-btn {
     padding: 6px 12px;
@@ -654,10 +643,7 @@ body {
     gap: 5px;
 }
 
-.mode-btn.active {
-    background: var(--primary);
-    color: white;
-}
+.mode-btn.active { background: var(--primary); color: white; }
 
 .preview-content {
     flex: 1;
@@ -675,9 +661,7 @@ body {
     line-height: 1.6;
 }
 
-.preview-content code {
-    font-family: 'JetBrains Mono', monospace;
-}
+.preview-content code { font-family: 'JetBrains Mono', monospace; }
 
 .preview-content img {
     max-width: 100%;
@@ -704,10 +688,7 @@ body {
     color: var(--text-primary);
 }
 
-.preview-content .markdown-body p {
-    margin-bottom: 16px;
-    line-height: 1.7;
-}
+.preview-content .markdown-body p { margin-bottom: 16px; line-height: 1.7; }
 
 .preview-content .markdown-body code {
     background: rgba(99, 102, 241, 0.1);
@@ -729,7 +710,6 @@ body {
     background: white;
 }
 
-/* ==================== Toast ==================== */
 .toast-container {
     position: fixed;
     bottom: 20px;
@@ -770,22 +750,6 @@ body {
     to { transform: translateX(0); opacity: 1; }
 }
 
-/* ==================== الفوتر ==================== */
-.footer {
-    text-align: center;
-    padding: 25px 20px;
-    color: white;
-    opacity: 0.9;
-    font-size: 0.9rem;
-}
-
-.footer a {
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-/* ==================== الأنيميشن ==================== */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-20px); }
@@ -796,34 +760,23 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ==================== التجاوب ==================== */
 @media (max-width: 768px) {
     .container { padding: 10px; }
     .main-card { padding: 15px; }
     .logo h1 { font-size: 1.5rem; }
     .logo i { font-size: 2rem; }
-    
     .toolbar { flex-direction: column; align-items: stretch; }
     .tools { flex-wrap: wrap; justify-content: center; }
-    
     .search-box input { width: 100%; }
     .search-box input:focus { width: 100%; }
-    
     .file-actions { opacity: 1; }
-    
     .preview-header { padding: 12px 15px; }
     .preview-content { padding: 15px; }
     .preview-title h3 { font-size: 1rem; }
-    
-    .theme-toggle {
-        top: 10px;
-        left: 10px;
-        width: 40px;
-        height: 40px;
-    }
+    .theme-toggle { top: 10px; left: 10px; width: 40px; height: 40px; }
+    .debug-card { font-size: 0.8rem; }
 }
 
-/* ==================== Scrollbar ==================== */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 5px; }
@@ -832,35 +785,56 @@ body {
 </head>
 <body>
 
-<!-- الخلفية -->
 <div class="bg-animation">
     <div class="shape shape-1"></div>
     <div class="shape shape-2"></div>
     <div class="shape shape-3"></div>
 </div>
 
-<!-- زر الثيم -->
 <button class="theme-toggle" id="themeToggle" title="تبديل الثيم">
     <i class="fas fa-moon"></i>
 </button>
 
 <div class="container">
-    <!-- الهيدر -->
     <header class="header">
         <div class="logo">
             <i class="fab fa-github"></i>
             <h1>مستعرض الملفات</h1>
         </div>
         <p class="subtitle">استعراض ملفات المستودع الحالي</p>
-        <div class="repo-badge" id="repoBadge">
+        
+        <!-- بطاقة التشخيص -->
+        <div class="debug-card" id="debugCard">
+            <h4><i class="fas fa-stethoscope"></i> معلومات التشخيص</h4>
+            <div class="debug-item">
+                <span class="debug-label">الرابط الحالي:</span>
+                <span class="debug-value" id="debugUrl">-</span>
+            </div>
+            <div class="debug-item">
+                <span class="debug-label">اسم المستخدم:</span>
+                <span class="debug-value" id="debugOwner">-</span>
+            </div>
+            <div class="debug-item">
+                <span class="debug-label">اسم المستودع:</span>
+                <span class="debug-value" id="debugRepo">-</span>
+            </div>
+            <div class="debug-item">
+                <span class="debug-label">الفرع:</span>
+                <span class="debug-value" id="debugBranch">-</span>
+            </div>
+            <div class="debug-item">
+                <span class="debug-label">حالة API:</span>
+                <span class="debug-value" id="debugApiStatus">جاري الفحص...</span>
+            </div>
+        </div>
+
+        <div class="repo-badge" id="repoBadge" style="display: none;">
             <i class="fas fa-link"></i>
-            <a id="repoLink" href="#" target="_blank">جاري التحميل...</a>
+            <a id="repoLink" href="#" target="_blank">-</a>
         </div>
     </header>
 
-    <!-- البطاقة الرئيسية -->
     <main class="main-card">
-        <!-- شريط الأدوات -->
         <div class="toolbar">
             <nav class="breadcrumbs" id="breadcrumbs">
                 <button class="breadcrumb-item active" data-path="">
@@ -890,7 +864,6 @@ body {
             </div>
         </div>
 
-        <!-- معلومات المسار -->
         <div class="path-info">
             <div class="path-stats">
                 <span id="itemsCount">0 عنصر</span>
@@ -909,7 +882,6 @@ body {
             </div>
         </div>
 
-        <!-- قائمة الملفات -->
         <div class="files-container">
             <div class="loading" id="loading">
                 <div class="spinner"></div>
@@ -924,25 +896,23 @@ body {
 
             <div class="error-state" id="errorState" style="display: none;">
                 <i class="fas fa-exclamation-triangle"></i>
-                <h3>حدث خطأ</h3>
+                <h3 id="errorTitle">حدث خطأ</h3>
                 <p id="errorMessage">-</p>
+                <div class="help-box" id="helpBox" style="display: none;">
+                    <h4><i class="fas fa-lightbulb"></i> كيفية الحل</h4>
+                    <ol id="helpSteps"></ol>
+                </div>
             </div>
 
             <div class="files-list" id="filesList"></div>
         </div>
     </main>
 
-    <!-- الفوتر -->
-    <footer class="footer">
-        <p>
-            <i class="fas fa-heart"></i>
-            صُنع بعناية • يعمل بـ 
-            <a href="https://docs.github.com/en/rest" target="_blank">GitHub API</a>
-        </p>
+    <footer class="footer" style="text-align: center; padding: 25px; color: white; opacity: 0.9;">
+        <p><i class="fas fa-heart"></i> صُنع بعناية</p>
     </footer>
 </div>
 
-<!-- معاينة الملف -->
 <div class="file-preview" id="filePreview">
     <div class="preview-header">
         <div class="preview-title">
@@ -980,7 +950,6 @@ body {
     <div class="preview-content" id="previewContent"></div>
 </div>
 
-<!-- Toast -->
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
@@ -991,7 +960,7 @@ const CONFIG = {
     GITHUB_BASE: 'https://github.com'
 };
 
-// ==================== الحالة العامة ====================
+// ==================== الحالة ====================
 const state = {
     owner: '',
     repo: '',
@@ -1000,14 +969,17 @@ const state = {
     files: [],
     viewMode: 'list',
     currentFile: null,
-    currentContent: null
+    currentContent: null,
+    htmlBlobUrl: null,
+    htmlContent: null,
+    currentTextContent: null
 };
 
 // ==================== أيقونات الملفات ====================
 const FILE_ICONS = {
     folder: { icon: 'fa-folder', class: 'folder' },
     html: { icon: 'fa-file-code', class: 'html' },
-    css: { icon: 'fa-css3-alt', class: 'code' },
+    css: { icon: 'fa-file-code', class: 'code' },
     js: { icon: 'fa-js', class: 'code' },
     json: { icon: 'fa-file-code', class: 'code' },
     py: { icon: 'fa-python', class: 'code' },
@@ -1023,135 +995,190 @@ const TEXT_EXTS = ['txt', 'log', 'env', 'gitignore', 'dockerignore', 'editorconf
 const ARCHIVE_EXTS = ['zip', 'rar', '7z', 'tar', 'gz'];
 
 // ==================== التهيئة ====================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 بدء تشغيل مستعرض الملفات');
     initTheme();
-    detectRepository();
     setupEventListeners();
+    await detectRepository();
 });
 
-// ==================== كشف المستودع تلقائياً ====================
-function detectRepository() {
+// ==================== كشف المستودع ====================
+async function detectRepository() {
     const hostname = window.location.hostname;
     const pathname = window.location.pathname;
+    const fullUrl = window.location.href;
     
-    // GitHub Pages: username.github.io/repo-name/
+    console.log('📍 URL الحالي:', fullUrl);
+    console.log('🌐 Hostname:', hostname);
+    console.log('📂 Pathname:', pathname);
+    
+    // تحديث معلومات التشخيص
+    document.getElementById('debugUrl').textContent = fullUrl;
+    
+    // حالة 1: GitHub Pages - username.github.io/repo-name/
     if (hostname.endsWith('.github.io')) {
         const username = hostname.replace('.github.io', '');
         const pathParts = pathname.split('/').filter(Boolean);
-        const repoName = pathParts[0] || username + '.github.io';
         
         state.owner = username;
-        state.repo = repoName;
         
-        // إذا كان المستودع الرئيسي (username.github.io)
-        if (pathParts.length === 0 || repoName === username + '.github.io') {
+        if (pathParts.length > 0) {
+            state.repo = pathParts[0];
+        } else {
+            // المستخدم على username.github.io فقط
             state.repo = username + '.github.io';
         }
+        
+        console.log('✅ GitHub Pages detected:', state.owner + '/' + state.repo);
+        
+    } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        // حالة 2: بيئة محلية - لا يمكن العمل بدون إعدادات
+        showError(
+            'بيئة محلية',
+            'أنت تعمل على localhost. هذا التطبيق يحتاج إلى GitHub Pages ليعمل تلقائياً.',
+            [
+                'ارفع الملفات إلى مستودع على GitHub',
+                'فعّل GitHub Pages من Settings → Pages',
+                'افتح الرابط: <code>https://username.github.io/repo-name/</code>'
+            ]
+        );
+        
+        document.getElementById('debugOwner').textContent = 'localhost (غير مدعوم)';
+        document.getElementById('debugRepo').textContent = '-';
+        document.getElementById('debugApiStatus').innerHTML = '<span class="status-error">❌ غير مدعوم</span>';
+        return;
+        
     } else {
-        // بيئة أخرى - افتراضي
-        state.owner = 'test';
-        state.repo = 'test';
+        // حالة 3: نطاق مخصص أو بيئة أخرى
+        showError(
+            'نطاق غير مدعوم',
+            `النطاق الحالي (${hostname}) لا يدعم الكشف التلقائي.`,
+            [
+                'استخدم GitHub Pages: <code>username.github.io/repo-name</code>',
+                'أو أضف إعدادات يدوية في الكود'
+            ]
+        );
+        
+        document.getElementById('debugOwner').textContent = hostname;
+        document.getElementById('debugRepo').textContent = 'غير معروف';
+        document.getElementById('debugApiStatus').innerHTML = '<span class="status-error">❌ غير مدعوم</span>';
+        return;
     }
     
-    // تحديث الرابط
+    // تحديث واجهة التشخيص
+    document.getElementById('debugOwner').textContent = state.owner;
+    document.getElementById('debugRepo').textContent = state.repo;
+    
+    // تحديث رابط المستودع
+    const repoBadge = document.getElementById('repoBadge');
     const repoLink = document.getElementById('repoLink');
     repoLink.textContent = `${state.owner} / ${state.repo}`;
     repoLink.href = `${CONFIG.GITHUB_BASE}/${state.owner}/${state.repo}`;
+    repoBadge.style.display = 'inline-flex';
     
-    // تحميل الفروع أولاً
-    loadBranches().then(() => {
-        loadDirectory('');
-    });
+    // محاولة تحميل المستودع
+    await tryLoadRepository();
 }
 
-// ==================== الأحداث ====================
-function setupEventListeners() {
-    // الثيم
-    document.getElementById('themeToggle').addEventListener('click', () => {
-        const current = document.documentElement.getAttribute('data-theme');
-        const newTheme = current === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateThemeIcon(newTheme);
-    });
+// ==================== محاولة التحميل مع fallback ====================
+async function tryLoadRepository() {
+    updateApiStatus('جاري الفحص...', 'warn');
     
-    // البحث
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-        renderFiles(e.target.value);
-    });
-    
-    // تبديل العرض
-    document.querySelectorAll('.view-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            state.viewMode = btn.dataset.view;
-            renderFiles(document.getElementById('searchInput').value);
-        });
-    });
-    
-    // التحديث
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-        loadDirectory(state.currentPath);
-    });
-    
-    // إغلاق المعاينة
-    document.getElementById('closePreviewBtn').addEventListener('click', closePreview);
-    
-    // أزرار المعاينة
-    document.getElementById('copyContentBtn').addEventListener('click', copyContent);
-    document.getElementById('downloadFileBtn').addEventListener('click', downloadFile);
-    document.getElementById('openRawBtn').addEventListener('click', openRaw);
-    
-    // أزرار المسار
-    document.getElementById('copyPathBtn').addEventListener('click', copyPath);
-    document.getElementById('openGithubBtn').addEventListener('click', openInGithub);
-    
-    // تبديل وضع المعاينة
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            togglePreviewMode(btn.dataset.mode);
-        });
-    });
-    
-    // اختصارات لوحة المفاتيح
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closePreview();
-        if (e.ctrlKey && e.key === 'f') {
-            e.preventDefault();
-            document.getElementById('searchInput').focus();
+    // 1. محاولة الحصول على معلومات المستودع
+    try {
+        const repoInfo = await fetchRepoInfo();
+        state.branch = repoInfo.default_branch || 'main';
+        console.log('✅ المستودع موجود، الفرع:', state.branch);
+        updateApiStatus('✅ متصل', 'ok');
+        
+        // تحميل الفروع والمحتوى
+        await loadDirectory('');
+        
+    } catch (error) {
+        console.error('❌ خطأ:', error);
+        
+        if (error.message.includes('404')) {
+            // 2. المستودع غير موجود - ربما الاسم خاطئ
+            showError(
+                'المستودع غير موجود',
+                `لم يتم العثور على المستودع: <code>${state.owner}/${state.repo}</code>`,
+                [
+                    'تأكد من اسم المستودع صحيح',
+                    'تأكد أن المستودع <strong>Public</strong> (عام)',
+                    'تأكد أنك رفعت ملفات إلى المستودع',
+                    'الرابط الصحيح: <code>https://' + state.owner + '.github.io/' + state.repo + '/</code>'
+                ]
+            );
+            updateApiStatus('❌ 404 - غير موجود', 'error');
+            
+        } else if (error.message.includes('403') || error.message.includes('rate limit')) {
+            // 3. تجاوز حد API
+            showError(
+                'تم تجاوز حد GitHub API',
+                'لقد تجاوزت الحد المسموح (60 طلب/ساعة). انتظر ساعة أو استخدم Token.',
+                [
+                    'انتظر 60 دقيقة وحاول مرة أخرى',
+                    'أو أضف GitHub Token في الكود لزيادة الحد إلى 5000 طلب/ساعة',
+                    'افتح Console (F12) لمزيد من التفاصيل'
+                ]
+            );
+            updateApiStatus('⚠️ Rate Limit', 'warn');
+            
+        } else if (error.message.includes('401')) {
+            showError(
+                'المستودع خاص',
+                'هذا المستودع خاص (Private). التطبيق يعمل فقط مع المستودعات العامة.',
+                [
+                    'اجعل المستودع Public من Settings',
+                    'أو أضف GitHub Token مع صلاحيات repo'
+                ]
+            );
+            updateApiStatus('❌ 401 - خاص', 'error');
+            
+        } else {
+            showError(
+                'خطأ في الاتصال',
+                error.message,
+                [
+                    'تحقق من اتصالك بالإنترنت',
+                    'افتح Console (F12) لمزيد من التفاصيل',
+                    'حاول مرة أخرى بعد قليل'
+                ]
+            );
+            updateApiStatus('❌ خطأ', 'error');
         }
-    });
+    }
 }
 
-function initTheme() {
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', saved);
-    updateThemeIcon(saved);
-}
-
-function updateThemeIcon(theme) {
-    const icon = document.querySelector('#themeToggle i');
-    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+function updateApiStatus(text, type) {
+    const el = document.getElementById('debugApiStatus');
+    const classMap = { ok: 'status-ok', error: 'status-error', warn: 'status-warn' };
+    el.innerHTML = `<span class="${classMap[type]}">${text}</span>`;
+    document.getElementById('debugBranch').textContent = state.branch || '-';
 }
 
 // ==================== GitHub API ====================
-async function loadBranches() {
-    try {
-        const response = await fetch(
-            `${CONFIG.API_BASE}/repos/${state.owner}/${state.repo}/branches?per_page=100`
-        );
-        if (response.ok) {
-            const branches = await response.json();
-            if (branches.length > 0) {
-                state.branch = branches[0].name;
+async function fetchRepoInfo() {
+    const url = `${CONFIG.API_BASE}/repos/${state.owner}/${state.repo}`;
+    console.log('🔍 فحص المستودع:', url);
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+        const status = response.status;
+        if (status === 404) throw new Error('404 - المستودع غير موجود');
+        if (status === 403) {
+            const data = await response.json().catch(() => ({}));
+            if (data.message && data.message.includes('rate limit')) {
+                throw new Error('rate limit - تم تجاوز حد API');
             }
+            throw new Error('403 - ممنوع');
         }
-    } catch (e) {
-        console.warn('Failed to load branches:', e);
+        if (status === 401) throw new Error('401 - غير مصرح');
+        throw new Error(`HTTP ${status}`);
     }
+    
+    return response.json();
 }
 
 async function loadDirectory(path = '') {
@@ -1160,20 +1187,22 @@ async function loadDirectory(path = '') {
     hideError();
     
     try {
-        const url = `${CONFIG.API_BASE}/repos/${state.owner}/${state.repo}/contents/${path}?ref=${state.branch}`;
+        // إصلاح: إزالة الـ trailing slash
+        const cleanPath = path.replace(/\/$/, '');
+        const url = `${CONFIG.API_BASE}/repos/${state.owner}/${state.repo}/contents/${cleanPath}?ref=${state.branch}`;
+        console.log('📂 تحميل المجلد:', url);
+        
         const response = await fetch(url);
         
         if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error('المستودع أو المسار غير موجود');
-            }
-            if (response.status === 403) {
-                throw new Error('تم تجاوز حد API - انتظر دقيقة');
-            }
-            throw new Error('فشل تحميل المجلد');
+            throw new Error(`HTTP ${response.status}`);
         }
         
         const files = await response.json();
+        
+        if (!Array.isArray(files)) {
+            throw new Error('استجابة غير متوقعة من API');
+        }
         
         // ترتيب: المجلدات أولاً
         state.files = files.sort((a, b) => {
@@ -1181,12 +1210,23 @@ async function loadDirectory(path = '') {
             return a.type === 'dir' ? -1 : 1;
         });
         
+        console.log(`✅ تم تحميل ${files.length} عنصر`);
+        
         renderFiles('');
         updateBreadcrumbs();
         updatePathInfo();
         
     } catch (error) {
-        showError(error.message);
+        console.error('❌ خطأ في التحميل:', error);
+        showError(
+            'فشل تحميل المجلد',
+            error.message,
+            [
+                'تحقق من اتصالك بالإنترنت',
+                'ربما تم تجاوز حد API - انتظر دقيقة',
+                'افتح Console (F12) للتفاصيل'
+            ]
+        );
     } finally {
         showLoading(false);
     }
@@ -1211,7 +1251,6 @@ function renderFiles(query = '') {
     
     if (files.length === 0) {
         container.innerHTML = '';
-        emptyState.style.display = query ? 'none' : 'block';
         if (query) {
             container.innerHTML = `
                 <div class="empty-state">
@@ -1220,6 +1259,9 @@ function renderFiles(query = '') {
                     <p>جرب كلمة بحث مختلفة</p>
                 </div>
             `;
+            emptyState.style.display = 'none';
+        } else {
+            emptyState.style.display = 'block';
         }
         return;
     }
@@ -1229,7 +1271,6 @@ function renderFiles(query = '') {
     
     container.innerHTML = files.map(file => createFileItem(file)).join('');
     
-    // إضافة الأحداث
     container.querySelectorAll('.file-item').forEach((item, idx) => {
         const file = files[idx];
         item.addEventListener('click', (e) => {
@@ -1294,9 +1335,7 @@ function createFileItem(file) {
 
 function getFileIcon(file) {
     if (file.type === 'dir') return FILE_ICONS.folder;
-    
     const ext = file.name.split('.').pop().toLowerCase();
-    
     if (IMAGE_EXTS.includes(ext)) return FILE_ICONS.image;
     if (ext === 'html' || ext === 'htm') return FILE_ICONS.html;
     if (ext === 'md') return FILE_ICONS.markdown;
@@ -1304,7 +1343,6 @@ function getFileIcon(file) {
     if (TEXT_EXTS.includes(ext)) return FILE_ICONS.file;
     if (ARCHIVE_EXTS.includes(ext)) return FILE_ICONS.archive;
     if (['json', 'xml', 'yaml', 'yml', 'toml'].includes(ext)) return FILE_ICONS.code;
-    
     return FILE_ICONS.file;
 }
 
@@ -1336,7 +1374,6 @@ async function openFilePreview(file) {
         state.currentFile = file;
         state.currentContent = content;
         
-        // عرض حسب النوع
         if (IMAGE_EXTS.includes(ext)) {
             modeToggle.style.display = 'none';
             previewContent.innerHTML = `<img src="${content.download_url}" alt="${file.name}">`;
@@ -1397,7 +1434,6 @@ async function openFilePreview(file) {
 function togglePreviewMode(mode) {
     const rendered = document.getElementById('previewRendered');
     const code = document.getElementById('previewCode');
-    
     if (!rendered || !code) return;
     
     if (mode === 'rendered') {
@@ -1417,10 +1453,71 @@ function closePreview() {
     }
 }
 
+// ==================== الأحداث ====================
+function setupEventListeners() {
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const newTheme = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+    });
+    
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        renderFiles(e.target.value);
+    });
+    
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.viewMode = btn.dataset.view;
+            renderFiles(document.getElementById('searchInput').value);
+        });
+    });
+    
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+        loadDirectory(state.currentPath);
+    });
+    
+    document.getElementById('closePreviewBtn').addEventListener('click', closePreview);
+    document.getElementById('copyContentBtn').addEventListener('click', copyContent);
+    document.getElementById('downloadFileBtn').addEventListener('click', downloadFile);
+    document.getElementById('openRawBtn').addEventListener('click', openRaw);
+    document.getElementById('copyPathBtn').addEventListener('click', copyPath);
+    document.getElementById('openGithubBtn').addEventListener('click', openInGithub);
+    
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            togglePreviewMode(btn.dataset.mode);
+        });
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closePreview();
+        if (e.ctrlKey && e.key === 'f') {
+            e.preventDefault();
+            document.getElementById('searchInput').focus();
+        }
+    });
+}
+
+function initTheme() {
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    updateThemeIcon(saved);
+}
+
+function updateThemeIcon(theme) {
+    const icon = document.querySelector('#themeToggle i');
+    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+
 // ==================== أزرار المعاينة ====================
 async function copyContent() {
     if (!state.currentContent) return;
-    
     try {
         const content = atob(state.currentContent.content);
         await navigator.clipboard.writeText(content);
@@ -1457,7 +1554,6 @@ async function downloadSpecificFile(file) {
         const response = await fetch(url);
         const blob = await response.blob();
         const blobUrl = URL.createObjectURL(blob);
-        
         const a = document.createElement('a');
         a.href = blobUrl;
         a.download = file.name;
@@ -1465,7 +1561,6 @@ async function downloadSpecificFile(file) {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(blobUrl);
-        
         showToast('success', `تم تحميل ${file.name}`);
     } catch (e) {
         showToast('error', 'فشل التحميل');
@@ -1508,10 +1603,7 @@ function updateBreadcrumbs() {
 function updatePathInfo() {
     const folders = state.files.filter(f => f.type === 'dir').length;
     const files = state.files.filter(f => f.type === 'file').length;
-    
-    document.getElementById('itemsCount').textContent = 
-        `${folders} مجلد، ${files} ملف`;
-    
+    document.getElementById('itemsCount').textContent = `${folders} مجلد، ${files} ملف`;
     const path = state.currentPath ? '/' + state.currentPath : '/';
     document.getElementById('currentPath').textContent = path;
 }
@@ -1529,7 +1621,7 @@ function getFileType(ext) {
     const types = {
         html: 'HTML', htm: 'HTML', css: 'CSS', js: 'JavaScript', ts: 'TypeScript',
         py: 'Python', json: 'JSON', md: 'Markdown', txt: 'Text',
-        png: 'PNG Image', jpg: 'JPEG Image', jpeg: 'JPEG Image', 
+        png: 'PNG Image', jpg: 'JPEG Image', jpeg: 'JPEG Image',
         gif: 'GIF Image', svg: 'SVG Image', webp: 'WebP Image',
         zip: 'ZIP Archive', pdf: 'PDF Document'
     };
@@ -1549,37 +1641,44 @@ function showLoading(show) {
     document.getElementById('errorState').style.display = 'none';
 }
 
-function showError(message) {
-    document.getElementById('errorState').style.display = 'block';
-    document.getElementById('errorMessage').textContent = message;
+function showError(title, message, steps = []) {
+    document.getElementById('loading').style.display = 'none';
     document.getElementById('filesList').style.display = 'none';
     document.getElementById('emptyState').style.display = 'none';
+    
+    const errorState = document.getElementById('errorState');
+    document.getElementById('errorTitle').textContent = title;
+    document.getElementById('errorMessage').innerHTML = message;
+    
+    const helpBox = document.getElementById('helpBox');
+    const helpSteps = document.getElementById('helpSteps');
+    
+    if (steps.length > 0) {
+        helpSteps.innerHTML = steps.map(s => `<li>${s}</li>`).join('');
+        helpBox.style.display = 'block';
+    } else {
+        helpBox.style.display = 'none';
+    }
+    
+    errorState.style.display = 'block';
 }
 
 function hideError() {
     document.getElementById('errorState').style.display = 'none';
 }
 
-// ==================== Toast ====================
 function showToast(type, message) {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    
     const icons = {
         success: 'fa-check-circle',
         error: 'fa-times-circle',
         warning: 'fa-exclamation-triangle',
         info: 'fa-info-circle'
     };
-    
-    toast.innerHTML = `
-        <i class="fas ${icons[type]}"></i>
-        <span>${message}</span>
-    `;
-    
+    toast.innerHTML = `<i class="fas ${icons[type]}"></i><span>${message}</span>`;
     container.appendChild(toast);
-    
     setTimeout(() => {
         toast.style.animation = 'slideInLeft 0.3s ease reverse';
         setTimeout(() => toast.remove(), 300);
@@ -1588,4 +1687,4 @@ function showToast(type, message) {
 </script>
 
 </body>
-    </html>
+</html>
