@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مستعرض ملفات المستودع</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-sidebar: #1e293b;
+            --bg-editor: #1e1e1e;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Changa', sans-serif; }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* شريط الإعدادات العلوي */
+        .top-bar {
+            background-color: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .top-bar input, .top-bar button {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .top-bar input { background-color: var(--bg-main); color: white; width: 220px; }
+        .top-bar button { background-color: var(--accent-color); color: white; cursor: pointer; border: none; font-weight: 600; }
+        .top-bar button:hover { background-color: var(--accent-hover); }
+
+        /* منطقة العمل الرئيسية */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* الجانب الأيمن: مستعرض الملفات */
+        .sidebar {
+            width: 300px;
+            background-color: var(--bg-sidebar);
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .sidebar h3 { font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px; color: var(--accent-color); }
+
+        .file-item {
+            padding: 8px 10px;
+            margin: 4px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .file-item:hover { background-color: rgba(255,255,255,0.05); }
+        .file-item.folder { color: #f59e0b; font-weight: 600; }
+        .file-item.file { color: #38bdf8; }
+        .file-item.active { background-color: var(--accent-color); color: white; }
+
+        /* الجانب الأيسر: عرض المحتوى */
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-main);
+        }
+
+        .editor-header {
+            background-color: #111827;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .current-path { font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-muted); }
+
+        .editor-actions { display: flex; gap: 10px; }
+        .btn-view { background-color: #64748b; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .btn-view:hover { background-color: #475569; }
+
+        /* مساحة العرض لقراءة الأكواد */
+        textarea {
+            flex: 1;
+            background-color: var(--bg-editor);
+            color: #e2e8f0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            padding: 20px;
+            border: none;
+            resize: none;
+            outline: none;
+            line-height: 1.5;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .status-msg { font-size: 0.9rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <input type="text" id="ghUser" placeholder="اسم المستخدم على GitHub">
+        <input type="text" id="ghRepo" placeholder="اسم المستودع (Repository)">
+        <button onclick="loadRepository('/')">عرض الملفات والمجلدات</button>
+        <span id="status" class="status-msg"></span>
+    </div>
+
+    <div class="main-layout">
+        <div class="sidebar">
+            <h3>📁 المجلدات والملفات</h3>
+            <div id="fileTree">
+                <p style="color: var(--text-muted); font-size: 0.9rem;">أدخل بيانات حسابك والمستودع بالأعلى ثم اضغط عرض.</p>
+            </div>
+        </div>
+
+        <div class="editor-container">
+            <div class="editor-header">
+                <div class="current-path" id="currentFilePath">لم يتم اختيار ملف لعرضه بعد</div>
+                <div class="editor-actions">
+                    <button class="btn-view" id="viewHtmlBtn" style="display:none;">👁️ فتح ومعاينة صفحة الـ HTML</button>
+                </div>
+            </div>
+            <textarea id="codeEditor" placeholder="// سيظهر محتوى الملف البرمجي هنا بمجرد اختياره وقراءته..." readonly></textarea>
+        </div>
+    </div>
+
+<script>
+    let currentPath = "";
+
+    // تذكر البيانات تلقائياً في المتصفح لتسهيل الاستخدام
+    document.getElementById('ghUser').value = localStorage.getItem('gh_user_view') || '';
+    document.getElementById('ghRepo').value = localStorage.getItem('gh_repo_view') || '';
+
+    // دالة جلب الملفات من مستودع GitHub
+    async function loadRepository(path = '/') {
+        const user = document.getElementById('ghUser').value;
+        const repo = document.getElementById('ghRepo').value;
+        const status = document.getElementById('status');
+
+        if(!user || !repo) {
+            alert('الرجاء كتابة اسم المستخدم واسم المستودع أولاً.');
+            return;
+        }
+
+        // حفظ البيانات محلياً
+        localStorage.setItem('gh_user_view', user);
+        localStorage.setItem('gh_repo_view', repo);
+
+        status.style.color = "orange";
+        status.textContent = "جاري فتح المجلد...";
+
+        let url = `https://api.github.com/repos/${user}/${repo}/contents${path === '/' ? '' : path}`;
+        
+        try {
+            let response = await fetch(url);
+            if(!response.ok) throw new Error("لم يتم العثور على المستودع، تأكد من الأسماء");
+            let data = await response.json();
+
+            displayFiles(data, path);
+            status.style.color = "#10b981";
+            status.textContent = "تم تحديث القائمة.";
+        } catch (err) {
+            status.style.color = "red";
+            status.textContent = err.message;
+        }
+    }
+
+    // بناء وعرض هيكل شجرة المجلدات والملفات
+    function displayFiles(items, currentDirPath) {
+        const treeContainer = document.getElementById('fileTree');
+        treeContainer.innerHTML = '';
+
+        // زر الرجوع للمجلد الأعلى
+        if(currentDirPath !== '/') {
+            const backItem = document.createElement('div');
+            backItem.className = "file-item folder";
+            backItem.innerHTML = "🔙 .. (رجوع للخلف)";
+            backItem.onclick = () => {
+                let parts = currentDirPath.split('/').filter(Boolean);
+                parts.pop();
+                loadRepository('/' + parts.join('/'));
+            };
+            treeContainer.appendChild(backItem);
+        }
+
+        // فرز العناصر ليظهر المجلد أولاً ثم الملفات
+        items.sort((a, b) => (b.type === 'dir') - (a.type === 'dir'));
+
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = `file-item ${item.type}`;
+            div.innerHTML = item.type === 'dir' ? `📁 ${item.name}` : `📄 ${item.name}`;
+            
+            if(item.type === 'dir') {
+                // عند الضغط على مجلد يتم الدخول إليه وعرض محتوياته
+                div.onclick = () => loadRepository('/' + item.path);
+            } else {
+                // عند الضغط على ملف يتم تفعيله وفتحه في القارئ
+                div.onclick = () => {
+                    document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+                    div.classList.add('active');
+                    openFile(item);
+                };
+            }
+            treeContainer.appendChild(div);
+        });
+    }
+
+    // دالة فتح وقراءة الملف المختار
+    async function openFile(fileObject) {
+        const status = document.getElementById('status');
+        
+        status.style.color = "orange";
+        status.textContent = "جاري قراءة الملف...";
+
+        try {
+            let response = await fetch(fileObject.url);
+            let data = await response.json();
+            
+            // فك تشفير المحتوى القادم من سيرفرات GitHub بصيغة Base64 ودعم اللغة العربية
+            let decodedContent = decodeURIComponent(escape(atob(data.content)));
+            
+            document.getElementById('codeEditor').value = decodedContent;
+            document.getElementById('currentFilePath').textContent = fileObject.path;
+            
+            currentPath = fileObject.path;
+            
+            // التعامل مع ملفات الـ HTML لتفعيل زر المعاينة الحية لها
+            const viewBtn = document.getElementById('viewHtmlBtn');
+            if(fileObject.name.endsWith('.html')) {
+                viewBtn.style.display = "inline-block";
+                const user = document.getElementById('ghUser').value;
+                const repo = document.getElementById('ghRepo').value;
+                viewBtn.onclick = () => {
+                    window.open(`https://${user}.github.io/${repo}/${fileObject.path}`, '_blank');
+                };
+            } else {
+                viewBtn.style.display = "none";
+            }
+
+            status.style.color = "#10b981";
+            status.textContent = "تم عرض الملف بنجاح.";
+        } catch (err) {
+            status.style.color = "red";
+            status.textContent = "خطأ أثناء قراءة الملف.";
+        }
+    }
+</script>
+</body>
+</html>
