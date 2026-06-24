@@ -4,288 +4,368 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مستعرض الملفات التلقائي</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --bg-main: #0f172a;
-            --bg-sidebar: #1e293b;
-            --bg-editor: #1e1e1e;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --success: #10b981;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Changa', sans-serif; }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            display: flex;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
             overflow: hidden;
         }
-
-        /* شريط العنوان العلوي التلقائي */
-        .top-bar {
-            background-color: var(--bg-sidebar);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 20px;
+        #error-page {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 2rem;
+            text-align: center;
+            color: #f85149;
+            font-size: 1.2rem;
+            flex-direction: column;
         }
-
-        .repo-title { font-weight: 700; color: var(--text-main); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
-        .status-msg { font-size: 0.9rem; font-weight: bold; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 20px; }
-
-        /* منطقة العمل الرئيسية */
-        .main-layout {
+        #app {
             display: flex;
-            flex: 1;
-            overflow: hidden;
+            width: 100%;
+            height: 100%;
         }
-
-        /* الجانب الأيمن: مستعرض شجرة الملفات والمجلدات */
-        .sidebar {
+        #sidebar {
             width: 320px;
-            background-color: var(--bg-sidebar);
-            border-left: 1px solid var(--border);
-            overflow-y: auto;
-            padding: 15px;
-        }
-
-        .sidebar h3 { font-size: 1rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; color: var(--accent-color); display: flex; justify-content: space-between; }
-
-        .file-item {
-            padding: 10px 12px;
-            margin: 5px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.95rem;
-            transition: background 0.2s, transform 0.1s;
-        }
-        .file-item:hover { background-color: rgba(255,255,255,0.05); transform: translateX(-2px); }
-        .file-item.folder { color: #f59e0b; font-weight: 600; background-color: rgba(245, 158, 11, 0.03); }
-        .file-item.file { color: #38bdf8; background-color: rgba(56, 189, 248, 0.02); }
-        .file-item.active { background-color: var(--accent-color); color: white !important; }
-
-        /* الجانب الأيسر: عرض المحتوى المختار */
-        .editor-container {
-            flex: 1;
+            min-width: 260px;
+            background: #161b22;
+            border-left: 1px solid #30363d;
             display: flex;
             flex-direction: column;
-            background-color: var(--bg-main);
         }
-
-        .editor-header {
-            background-color: #111827;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            min-height: 55px;
-        }
-
-        .current-path { font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-muted); }
-
-        .btn-view { 
-            background-color: var(--success); 
-            color: white; 
-            padding: 8px 16px; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            font-size: 0.9rem;
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
-            transition: background 0.2s;
-        }
-        .btn-view:hover { background-color: #059669; }
-
-        /* مساحة العرض لقراءة الأكواد والنصوص */
-        textarea {
-            flex: 1;
-            background-color: var(--bg-editor);
-            color: #e2e8f0;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.95rem;
-            padding: 20px;
-            border: none;
-            resize: none;
-            outline: none;
-            line-height: 1.6;
+        #breadcrumb {
+            padding: 0.8rem;
+            background: #0d1117;
+            border-bottom: 1px solid #30363d;
             direction: ltr;
             text-align: left;
+            word-break: break-all;
+            font-size: 0.9rem;
+            min-height: 45px;
+        }
+        #breadcrumb span { color: #58a6ff; cursor: pointer; }
+        #breadcrumb span:hover { text-decoration: underline; }
+        #file-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.7rem;
+            margin: 0.2rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            direction: ltr;
+            text-align: left;
+        }
+        .item:hover { background: #1f2937; }
+        .item .icon { margin-right: 0.7rem; font-size: 1.3rem; }
+        .item .name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+        .folder { color: #58a6ff; font-weight: bold; }
+        .loading-text, .error-text {
+            text-align: center;
+            padding: 1rem;
+        }
+        .error-text { color: #f85149; }
+
+        #preview {
+            flex: 1;
+            background: #0d1117;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #preview-header {
+            padding: 0.6rem 1rem;
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            direction: ltr;
+            text-align: left;
+            color: #8b949e;
+        }
+        #preview-content {
+            flex: 1;
+            overflow: auto;
+            padding: 1rem;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        pre {
+            background: #161b22;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow: auto;
+            direction: ltr;
+            text-align: left;
+            color: #c9d1d9;
+        }
+
+        @media (max-width: 700px) {
+            #app { flex-direction: column; }
+            #sidebar { width: 100%; height: 50%; border-left: none; border-bottom: 1px solid #30363d; }
         }
     </style>
 </head>
 <body>
-
-    <div class="top-bar">
-        <div class="repo-title" id="repoTitle">📂 جاري فحص المستودع...</div>
-        <div id="status" class="status-msg" style="color: orange;">جاري التحميل الفوري...</div>
+    <div id="app" style="display: none;">
+        <div id="sidebar">
+            <div id="breadcrumb"></div>
+            <div id="file-list"></div>
+        </div>
+        <div id="preview">
+            <div id="preview-header">📄 اختر ملفًا لعرضه</div>
+            <div id="preview-content"></div>
+        </div>
     </div>
-
-    <div class="main-layout">
-        <div class="sidebar">
-            <h3><span>📂 تصفح المجلدات</span> <span id="itemCount" style="font-size:0.8rem; color:var(--text-muted);"></span></h3>
-            <div id="fileTree"></div>
-        </div>
-
-        <div class="editor-container">
-            <div class="editor-header">
-                <div class="current-path" id="currentFilePath">الرجاء اختيار ملف من القائمة الجانبية</div>
-                <button class="btn-view" id="viewHtmlBtn" style="display:none;">👁️ معاينة تشغيل الـ HTML</button>
-            </div>
-            <textarea id="codeEditor" placeholder="// سيتم فك وتشفير وعرض الكود البرمجي هنا فوراً عند الضغط عليه..." readonly></textarea>
-        </div>
+    <div id="error-page" style="display: none;">
+        <div>❌ تعذّر تحميل المستودع</div>
+        <div style="font-size: 0.9rem; margin-top: 1rem; color: #8b949e;" id="error-message"></div>
     </div>
 
 <script>
-    let username = "";
-    let repository = "";
-    let currentPath = "";
+    (function() {
+        const appDiv = document.getElementById('app');
+        const errorDiv = document.getElementById('error-page');
+        const errorMsg = document.getElementById('error-message');
+        const breadcrumbDiv = document.getElementById('breadcrumb');
+        const fileListDiv = document.getElementById('file-list');
+        const previewHeader = document.getElementById('preview-header');
+        const previewContent = document.getElementById('preview-content');
 
-    // دالة ذكية لاستخراج اسم المستخدم والمستودع من رابط المتصفح الحالي تلقائياً
-    function parseGitHubUrl() {
-        const hostname = window.location.hostname;
-        const pathname = window.location.pathname;
+        // استخراج owner و repo من رابط الصفحة (GitHub Pages)
+        function detectRepo() {
+            const host = window.location.hostname;
+            const path = window.location.pathname;
 
-        // إذا كان الموقع يعمل على GitHub Pages (username.github.io/repo)
-        if (hostname.includes('.github.io')) {
-            username = hostname.split('.')[0];
-            repository = pathname.split('/').filter(Boolean)[0] || "";
-        } 
-        // إذا كان يعمل محلياً للتجربة أو بطريقة أخرى، يضع قيم افتراضية كمثال تحذيري
-        else {
-            username = "username";
-            repository = "repository";
-            document.getElementById('status').textContent = "يرجى رفعه على GitHub Pages ليعمل التتبع التلقائي";
-            document.getElementById('status').style.color = "red";
-            return false;
+            // نمط: username.github.io/repo أو username.github.io/repo/...
+            const match = host.match(/^([^.]+)\.github\.io$/);
+            if (match) {
+                const owner = match[1];
+                const parts = path.split('/').filter(p => p !== '');
+                // إذا كان هناك مسار، فأول جزء هو اسم المستودع
+                if (parts.length > 0) {
+                    const repo = parts[0];
+                    return { owner, repo, basePath: parts.slice(1).join('/') || '' };
+                } else {
+                    // صفحات المستخدم (user page) ليس لها مستودع فرعي، قد يكون repo = owner.github.io
+                    // لكننا نتعامل معها كمستودع يسمى owner.github.io
+                    return { owner, repo: `${owner}.github.io`, basePath: '' };
+                }
+            }
+            // بيئة محلية أو غير مدعومة
+            return null;
         }
-        
-        document.getElementById('repoTitle').innerHTML = `📂 المستودع الحالي: <span style="color:var(--accent-color);">${repository}</span>`;
-        return true;
-    }
 
-    // دالة جلب الملفات المباشرة من الـ API العام لـ GitHub
-    async function loadRepository(path = '/') {
-        const status = document.getElementById('status');
-        status.style.color = "orange";
-        status.textContent = "جاري تحديث القائمة...";
-
-        let url = `https://api.github.com/repos/${username}/${repository}/contents${path === '/' ? '' : path}`;
-        
-        try {
-            let response = await fetch(url);
-            if(!response.ok) throw new Error("فشل في جلب البيانات من GitHub");
-            let data = await response.json();
-
-            displayFiles(data, path);
-            status.style.color = "var(--success)";
-            status.textContent = "مُتصل ومُحدث ✅";
-        } catch (err) {
-            status.style.color = "red";
-            status.textContent = "خطأ في الاتصال تلقائياً";
+        const repoInfo = detectRepo();
+        if (!repoInfo) {
+            showError('لم يتم اكتشاف مستودع GitHub Pages. تأكد من تشغيل الصفحة عبر <username>.github.io/<repo>.');
+            return;
         }
-    }
 
-    // بناء وعرض هيكل شجرة المجلدات والملفات بشكل منسق ونظيف
-    function displayFiles(items, currentDirPath) {
-        const treeContainer = document.getElementById('fileTree');
-        treeContainer.innerHTML = '';
+        const { owner, repo, basePath } = repoInfo;
+        let branch = 'main'; // سنحاول اكتشاف الفرع الافتراضي لاحقاً
+        let currentPath = basePath || ''; // مسار نسبي من الجذر (قد يكون فارغاً أو مجلد)
 
-        // زر الرجوع للمجلد السابق (يظهر فقط إذا كنا داخل مجلد فرعي)
-        if(currentDirPath !== '/') {
-            const backItem = document.createElement('div');
-            backItem.className = "file-item folder";
-            backItem.innerHTML = "🔙 .. (الرجوع للخلف)";
-            backItem.onclick = () => {
-                let parts = currentDirPath.split('/').filter(Boolean);
-                parts.pop();
-                loadRepository('/' + parts.join('/'));
+        // استخراج رمز وصول من الرابط (اختياري)
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token') || '';
+
+        function getHeaders() {
+            const headers = { 'Accept': 'application/vnd.github.v3+json' };
+            if (token) headers['Authorization'] = `token ${token}`;
+            return headers;
+        }
+
+        // اكتشاف الفرع الافتراضي
+        async function fetchDefaultBranch() {
+            try {
+                const url = `https://api.github.com/repos/${owner}/${repo}`;
+                const res = await fetch(url, { headers: getHeaders() });
+                if (res.ok) {
+                    const data = await res.json();
+                    branch = data.default_branch || 'main';
+                }
+            } catch (e) { /* استمر باستخدام main */ }
+        }
+
+        // جلب محتويات مسار
+        async function fetchContents(path) {
+            const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+            const res = await fetch(url, { headers: getHeaders() });
+            if (!res.ok) {
+                if (res.status === 403) throw new Error('تم تجاوز حد الطلبات. أضف ?token=TOKEN للرابط أو انتظر.');
+                if (res.status === 404) throw new Error('المسار غير موجود');
+                throw new Error(`خطأ ${res.status}`);
+            }
+            return res.json();
+        }
+
+        async function loadDirectory(path) {
+            fileListDiv.innerHTML = '<div class="loading-text">⏳ جاري التحميل...</div>';
+            previewHeader.textContent = '📄 اختر ملفًا لعرضه';
+            previewContent.innerHTML = '';
+            try {
+                const data = await fetchContents(path);
+                if (!Array.isArray(data)) throw new Error('المسار ليس مجلداً');
+                renderDirectory(data, path);
+                currentPath = path;
+                updateBreadcrumb(path);
+            } catch (err) {
+                fileListDiv.innerHTML = `<div class="error-text">❌ ${err.message}</div>`;
+            }
+        }
+
+        function renderDirectory(items, parentPath) {
+            if (items.length === 0) {
+                fileListDiv.innerHTML = '<div class="loading-text">📭 المجلد فارغ</div>';
+                return;
+            }
+
+            const folders = items.filter(i => i.type === 'dir').sort((a,b) => a.name.localeCompare(b.name));
+            const files = items.filter(i => i.type === 'file').sort((a,b) => a.name.localeCompare(b.name));
+            const sorted = [...folders, ...files];
+
+            let html = '';
+            if (parentPath !== '') {
+                const parent = parentPath.substring(0, parentPath.lastIndexOf('/')) || '';
+                html += `<div class="item folder" data-path="${parent}" data-type="dir">
+                    <span class="icon">📁</span><span class="name">.. (المجلد الأعلى)</span>
+                </div>`;
+            }
+
+            sorted.forEach(item => {
+                const icon = item.type === 'dir' ? '📁' : getFileIcon(item.name);
+                html += `<div class="item ${item.type === 'dir' ? 'folder' : ''}" 
+                              data-path="${item.path}" data-type="${item.type}">
+                    <span class="icon">${icon}</span>
+                    <span class="name" title="${item.name}">${item.name}</span>
+                </div>`;
+            });
+
+            fileListDiv.innerHTML = html;
+
+            fileListDiv.querySelectorAll('.item').forEach(el => {
+                el.addEventListener('click', async () => {
+                    const p = el.dataset.path;
+                    if (el.dataset.type === 'dir') await loadDirectory(p);
+                    else await previewFile(p);
+                });
+            });
+
+            if (items.length === 1000) {
+                fileListDiv.innerHTML += '<div class="loading-text">⚠️ قد يوجد المزيد من العناصر (الحد الأقصى 1000).</div>';
+            }
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = {
+                html: '🌐', htm: '🌐', css: '🎨', js: '📜', ts: '📘',
+                json: '📋', md: '📝', txt: '📄', pdf: '📕',
+                png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', svg: '🖼️', webp: '🖼️',
+                mp4: '🎬', mp3: '🎵', wav: '🎵', zip: '📦', rar: '📦'
             };
-            treeContainer.appendChild(backItem);
+            return icons[ext] || '📄';
         }
 
-        // فرز وترتيب العناصر: المجلدات أولاً ثم الملفات العادية لسهولة الوصول لكثرتها
-        items.sort((a, b) => (b.type === 'dir') - (a.type === 'dir'));
-        document.getElementById('itemCount').textContent = `(${items.length} عنصر)`;
+        async function previewFile(filePath) {
+            previewHeader.textContent = `📄 ${filePath}`;
+            previewContent.innerHTML = '<div class="loading-text">⏳ تحميل المحتوى...</div>';
+            try {
+                const fileData = await fetchContents(filePath);
+                const ext = filePath.split('.').pop().toLowerCase();
+                const isHtml = ext === 'html' || ext === 'htm';
+                const isImage = ['png','jpg','jpeg','gif','svg','webp','ico'].includes(ext);
+                const isText = ['txt','md','csv','json','xml','css','js','ts','py','java','c','cpp','rb','go','rs','sh','yml','yaml','toml','ini'].includes(ext);
 
-        items.forEach(item => {
-            // تخطي ملف index.html الحالي حتى لا يعرض المستعرض نفسه بالخطأ
-            if(item.path === 'index.html' && currentDirPath === '/') return;
+                if (isHtml) {
+                    const htmlContent = decodeBase64(fileData.content);
+                    const blob = new Blob([htmlContent], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    previewContent.innerHTML = `<iframe sandbox="allow-scripts allow-same-origin" src="${url}"></iframe>`;
+                } else if (isImage) {
+                    const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
+                    previewContent.innerHTML = `<img src="${rawUrl}" alt="${filePath}">`;
+                } else if (isText || fileData.size < 100000) {
+                    const text = decodeBase64(fileData.content);
+                    previewContent.innerHTML = `<pre>${escapeHtml(text)}</pre>`;
+                } else {
+                    previewContent.innerHTML = `<div class="loading-text">⚠️ لا يمكن معاينة هذا الملف. <br>
+                    <a href="https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}" target="_blank">فتح في تبويب جديد</a></div>`;
+                }
+            } catch (err) {
+                previewContent.innerHTML = `<div class="error-text">❌ ${err.message}</div>`;
+            }
+        }
 
+        function decodeBase64(str) {
+            const binary = atob(str.replace(/\s/g, ''));
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+            return new TextDecoder('utf-8').decode(bytes);
+        }
+
+        function escapeHtml(text) {
             const div = document.createElement('div');
-            div.className = `file-item ${item.type}`;
-            div.innerHTML = item.type === 'dir' ? `📁 ${item.name}` : `📄 ${item.name}`;
-            
-            if(item.type === 'dir') {
-                div.onclick = () => loadRepository('/' + item.path);
-            } else {
-                div.onclick = () => {
-                    document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
-                    div.classList.add('active');
-                    openFile(item);
-                };
-            }
-            treeContainer.appendChild(div);
-        });
-    }
-
-    // دالة فتح وقراءة الملفات الحية
-    async function openFile(fileObject) {
-        const status = document.getElementById('status');
-        status.style.color = "orange";
-        status.textContent = "جاري قراءة المحتوى...";
-
-        try {
-            let response = await fetch(fileObject.url);
-            let data = await response.json();
-            
-            // فك التشفير عن النص ودعم الكلمات العربية بأمان
-            let decodedContent = decodeURIComponent(escape(atob(data.content)));
-            
-            document.getElementById('codeEditor').value = decodedContent;
-            document.getElementById('currentFilePath').textContent = fileObject.path;
-            
-            currentPath = fileObject.path;
-            
-            // تخصيص استعراض ملفات الـ HTML بفتحها كصفحة ويب حقيقية في نافذة جديدة
-            const viewBtn = document.getElementById('viewHtmlBtn');
-            if(fileObject.name.endsWith('.html')) {
-                viewBtn.style.display = "inline-block";
-                viewBtn.onclick = () => {
-                    window.open(`https://${username}.github.io/${repository}/${fileObject.path}`, '_blank');
-                };
-            } else {
-                viewBtn.style.display = "none";
-            }
-
-            status.style.color = "var(--success)";
-            status.textContent = "تم عرض الملف.";
-        } catch (err) {
-            status.style.color = "red";
-            status.textContent = "خطأ في عرض الملف";
+            div.textContent = text;
+            return div.innerHTML;
         }
-    }
 
-    // بدء التشغيل التلقائي فور فتح الصفحة
-    if (parseGitHubUrl()) {
-        loadRepository('/');
-    }
+        function updateBreadcrumb(path) {
+            if (!path) {
+                breadcrumbDiv.innerHTML = '<span data-path="">🏠 الجذر</span>';
+            } else {
+                const parts = path.split('/');
+                let cumulative = '';
+                let html = '<span data-path="">🏠 الجذر</span> / ';
+                parts.forEach((part, i) => {
+                    cumulative += (i === 0 ? '' : '/') + part;
+                    html += `<span data-path="${cumulative}">${part}</span> / `;
+                });
+                breadcrumbDiv.innerHTML = html;
+            }
+            breadcrumbDiv.querySelectorAll('span').forEach(span => {
+                span.addEventListener('click', (e) => {
+                    loadDirectory(e.target.dataset.path);
+                });
+            });
+        }
+
+        function showError(message) {
+            appDiv.style.display = 'none';
+            errorDiv.style.display = 'flex';
+            errorMsg.textContent = message;
+        }
+
+        // البدء
+        (async function init() {
+            await fetchDefaultBranch();
+            // إظهار التطبيق
+            appDiv.style.display = 'flex';
+            loadDirectory(currentPath);
+        })().catch(err => showError(err.message));
+    })();
 </script>
 </body>
 </html>
