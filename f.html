@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>مولّد جهات اتصال دولية – Google Contacts CSV</title>
+  <!-- Google Fonts: nice Arabic font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #f0f4fd 0%, #e8eef9 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      direction: rtl;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: #ffffff;
+      box-shadow: 0 25px 45px rgba(0, 20, 60, 0.12);
+      border-radius: 2.5rem;
+      padding: 2.2rem 2rem;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 1.8rem 1.2rem;
+        border-radius: 2rem;
+      }
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #0b2b5e;
+      margin-bottom: 0.4rem;
+      text-align: center;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    h1 span {
+      background: #1e3b6b;
+      color: white;
+      font-size: 1.1rem;
+      padding: 0.25rem 0.9rem;
+      border-radius: 3rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #4a5c6c;
+      margin-bottom: 2rem;
+      font-weight: 500;
+      border-bottom: 1px solid #dce3f0;
+      padding-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .step {
+      margin-bottom: 1.8rem;
+      opacity: 0.98;
+      transition: all 0.3s;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #142b4b;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    label i {
+      font-style: normal;
+      font-size: 1.2rem;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      border: 1.5px solid #dce2f0;
+      border-radius: 1.2rem;
+      font-size: 1rem;
+      background: #f9fafd;
+      color: #0b1e33;
+      font-weight: 500;
+      transition: 0.2s;
+      outline: none;
+      font-family: 'Tajawal', sans-serif;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9L12 15L18 9' stroke='%23324a6b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: left 1rem center;
+      padding-left: 2.8rem;
+    }
+
+    select:hover, input[type="number"]:hover {
+      border-color: #a1b5d8;
+    }
+    select:focus, input[type="number"]:focus {
+      border-color: #1e4a8b;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(30, 74, 139, 0.1);
+    }
+
+    input[type="number"] {
+      background-image: none;
+      padding-left: 1.2rem;
+    }
+
+    .operators-box {
+      background: #f2f6fe;
+      border-radius: 1.2rem;
+      padding: 1rem 1.2rem;
+      margin: 1rem 0 0.2rem;
+      font-size: 0.9rem;
+      color: #1e3b5b;
+      border: 1px solid #dfe8fa;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .operators-box strong {
+      font-size: 0.9rem;
+      color: #0b2542;
+    }
+    .operator-tag {
+      background: white;
+      border-radius: 2rem;
+      padding: 0.3rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      border: 1px solid #ccd9f0;
+      color: #15315e;
+    }
+
+    .btn {
+      background: #0b2b5e;
+      border: none;
+      color: white;
+      font-weight: 700;
+      padding: 1rem 2rem;
+      border-radius: 2.5rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.25s;
+      letter-spacing: 0.3px;
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, #102a4c, #05234d);
+      box-shadow: 0 8px 18px rgba(8, 38, 82, 0.2);
+      margin-top: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+    .btn:hover {
+      background: linear-gradient(135deg, #163b6b, #0a2a58);
+      box-shadow: 0 12px 22px rgba(8, 38, 82, 0.3);
+      transform: translateY(-2px);
+    }
+    .btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 4px 10px rgba(8, 38, 82, 0.2);
+    }
+
+    .info-message {
+      background: #e8f0fe;
+      border-radius: 1rem;
+      padding: 0.8rem 1.2rem;
+      color: #10315c;
+      font-size: 0.9rem;
+      margin: 1.2rem 0 0.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid #c5d5f7;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 1.2rem;
+      font-size: 0.8rem;
+      color: #62748b;
+    }
+
+    .all-option {
+      font-weight: 600;
+      color: #09264b;
+    }
+
+    hr {
+      border: 0.5px solid #dae2f5;
+      margin: 1.2rem 0 0.8rem;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>
+    🌍 جهات اتصال دولية
+    <span>CSV</span>
+  </h1>
+  <div class="subtitle">مولّد أرقام هاتف لجوجل Contacts – 100 دولة</div>
+
+  <!-- Step 1: country -->
+  <div class="step">
+    <label>🇺🇳 اختر الدولة</label>
+    <select id="countrySelect">
+      <option value="">-- اختر دولة --</option>
+    </select>
+  </div>
+
+  <!-- Step 2: show operators info and selection -->
+  <div class="step" id="operatorStep" style="display: none;">
+    <label>📱 اختر مقدم الخدمة (الموزع)</label>
+    <select id="operatorSelect">
+      <option value="all">🌐 جميع المقدمات (عشوائي)</option>
+    </select>
+    <div class="operators-box" id="operatorsPreview">
+      <strong>المقدمات المتاحة:</strong>
+      <span id="prefixTags"></span>
+    </div>
+  </div>
+
+  <!-- Step 3: number of contacts -->
+  <div class="step" id="countStep" style="display: none;">
+    <label>🔢 عدد جهات الاتصال</label>
+    <input type="number" id="contactCount" placeholder="مثال: 50" min="1" max="5000" value="10">
+  </div>
+
+  <!-- Generate button -->
+  <button class="btn" id="generateBtn" disabled>
+    ⬇️ إنشاء وحفظ CSV
+  </button>
+
+  <div id="messageBox" class="info-message" style="display: none;"></div>
+  <div class="footer-note">
+    الملف جاهز للرفع إلى <strong>contacts.google.com</strong> ← استيراد
+  </div>
+</div>
+
+<script>
+  (function() {
+    // --------------------------------------------------------------
+    // 1. DATA: 100 countries with operators (same structure as Python)
+    // --------------------------------------------------------------
+    const countries = [
+      { name: "مصر", code: "20", operators: [
+        { name: "فودافون", prefixes: ["10"] },
+        { name: "أورانج", prefixes: ["12"] },
+        { name: "اتصالات", prefixes: ["11"] },
+        { name: "وي", prefixes: ["15"] }
+      ]},
+      { name: "السعودية", code: "966", operators: [
+        { name: "STC", prefixes: ["50","53","55"] },
+        { name: "موبايلي", prefixes: ["54","56"] },
+        { name: "زين", prefixes: ["58","59"] }
+      ]},
+      { name: "الإمارات", code: "971", operators: [
+        { name: "اتصالات", prefixes: ["50","56"] },
+        { name: "دو", prefixes: ["52","55"] }
+      ]},
+      { name: "الكويت", code: "965", operators: [
+        { name: "زين", prefixes: ["9","6"] },
+        { name: "أوريدو", prefixes: ["5","7"] },
+        { name: "فيفا", prefixes: ["4"] }
+      ]},
+      { name: "قطر", code: "974", operators: [
+        { name: "أوريدو", prefixes: ["33","55","77"] },
+        { name: "فودافون", prefixes: ["30","50","70"] }
+      ]},
+      { name: "البحرين", code: "973", operators: [
+        { name: "بتلكو", prefixes: ["3"] },
+        { name: "زين", prefixes: ["6"] },
+        { name: "فيفا", prefixes: ["8"] }
+      ]},
+      { name: "عُمان", code: "968", operators: [
+        { name: "عمانتل", prefixes: ["92","94","97"] },
+        { name: "أوريدو", prefixes: ["91","93","95"] }
+      ]},
+      { name: "الأردن", code: "962", operators: [
+        { name: "زين", prefixes: ["79","78"] },
+        { name: "أورنج", prefixes: ["77"] },
+        { name: "أمنية", prefixes: ["70"] }
+      ]},
+      { name: "لبنان", code: "961", operators: [
+        { name: "ألفا", prefixes: ["70","71","76"] },
+        { name: "تاتش", prefixes: ["81","82","83"] }
+      ]},
+      { name: "العراق", code: "964", operators: [
+        { name: "زين", prefixes: ["780","781","790"] },
+        { name: "آسيا سيل", prefixes: ["770","771","772"] },
+        { name: "كورك", prefixes: ["750","751"] }
+      ]},
+      { name: "المغرب", code: "212", operators: [
+        { name: "اتصالات المغرب", prefixes: ["6","7"] },
+        { name: "أورنج", prefixes: ["5"] },
+        { name: "إنوي", prefixes: ["8"] }
+      ]},
+      { name: "الجزائر", code: "213", operators: [
+        { name: "موبيليس", prefixes: ["6"] },
+        { name: "جازي", prefixes: ["5"] },
+        { name: "أوريدو", prefixes: ["7"] }
+      ]},
+      { name: "تونس", code: "216", operators: [
+        { name: "تونيزيانا", prefixes: ["9"] },
+        { name: "أورنج", prefixes: ["5"] },
+        { name: "أوريدو", prefixes: ["2"] }
+      ]},
+      { name: "ليبيا", code: "218", operators: [
+        { name: "المدار", prefixes: ["91"] },
+        { name: "ليبيانا", prefixes: ["92"] }
+      ]},
+      { name: "السودان", code: "249", operators: [
+        { name: "زين", prefixes: ["91","92"] },
+        { name: "سوداني", prefixes: ["11","12"] },
+        { name: "إم تي إن", prefixes: ["99"] }
+      ]},
+      { name: "اليمن", code: "967", operators: [
+        { name: "سبأفون", prefixes: ["71"] },
+        { name: "إم تي إن", prefixes: ["73"] },
+        { name: "يمن موبايل", prefixes: ["77"] }
+      ]},
+      { name: "سوريا", code: "963", operators: [
+        { name: "سيريتل", prefixes: ["9"] },
+        { name: "إم تي إن", prefixes: ["95"] }
+      ]},
+      { name: "فلسطين", code: "970", operators: [
+        { name: "جوال", prefixes: ["59"] },
+        { name: "أوريدو", prefixes: ["56"] }
+      ]},
+      { name: "الولايات المتحدة", code: "1", operators: [
+        { name: "عام", prefixes: ["201","212","310","415","512","617","702","808","907","305"] }
+      ]},
+      { name: "كندا", code: "1", operators: [
+        { name: "عام", prefixes: ["416","604","514","403","587","902"] }
+      ]},
+      { name: "المملكة المتحدة", code: "44", operators: [
+        { name: "EE", prefixes: ["7911","7950"] },
+        { name: "Vodafone", prefixes: ["7712","7830"] },
+        { name: "O2", prefixes: ["7700","7800"] },
+        { name: "Three", prefixes: ["7730","7870"] }
+      ]},
+      { name: "فرنسا", code: "33", operators: [
+        { name: "Orange", prefixes: ["6"] },
+        { name: "SFR", prefixes: ["6"] },
+        { name: "Bouygues", prefixes: ["6"] },
+        { name: "Free", prefixes: ["7"] }
+      ]},
+      { name: "ألمانيا", code: "49", operators: [
+        { name: "Telekom", prefixes: ["151","160"] },
+        { name: "Vodafone", prefixes: ["152","162"] },
+        { name: "O2", prefixes: ["176","179"] }
+      ]},
+      { name: "إيطاليا", code: "39", operators: [
+        { name: "TIM", prefixes: ["330","335"] },
+        { name: "Vodafone", prefixes: ["340","345"] },
+        { name: "Wind Tre", prefixes: ["320","389"] }
+      ]},
+      { name: "إسبانيا", code: "34", operators: [
+        { name: "Movistar", prefixes: ["6","7"] },
+        { name: "Vodafone", prefixes: ["6","7"] },
+        { name: "Orange", prefixes: ["6","7"] }
+      ]},
+      { name: "هولندا", code: "31", operators: [
+        { name: "KPN", prefixes: ["6"] },
+        { name: "Vodafone", prefixes: ["6"] },
+        { name: "T-Mobile", prefixes: ["6"] }
+      ]},
+      { name: "بلجيكا", code: "32", operators: [
+        { name: "Proximus", prefixes: ["470","471"] },
+        { name: "Orange", prefixes: ["495","496"] },
+        { name: "Telenet", prefixes: ["468"] }
+      ]},
+      { name: "سويسرا", code: "41", operators: [
+        { name: "Swisscom", prefixes: ["79"] },
+        { name: "Sunrise", prefixes: ["76"] },
+        { name: "Salt", prefixes: ["78"] }
+      ]},
+      { name: "السويد", code: "46", operators: [
+        { name: "Telia", prefixes: ["70"] },
+        { name: "Tele2", prefixes: ["73"] },
+        { name: "Telenor", prefixes: ["72"] }
+      ]},
+      { name: "النرويج", code: "47", operators: [
+        { name: "Telenor", prefixes: ["4"] },
+        { name: "Telia", prefixes: ["9"] }
+      ]},
+      { name: "الدنمارك", code: "45", operators: [
+        { name: "TDC", prefixes: ["2","3"] },
+        { name: "Telenor", prefixes: ["4"] },
+        { name: "3", prefixes: ["5"] }
+      ]},
+      { name: "فنلندا", code: "358", operators: [
+        { name: "Elisa", prefixes: ["4","5"] },
+        { name: "DNA", prefixes: ["4","5"] },
+        { name: "Telia", prefixes: ["4","5"] }
+      ]},
+      { name: "بولندا", code: "48", operators: [
+        { name: "Orange", prefixes: ["50","51"] },
+        { name: "Play", prefixes: ["53","57"] },
+        { name: "T-Mobile", prefixes: ["60","66"] },
+        { name: "Plus", prefixes: ["69","78"] }
+      ]},
+      { name: "اليونان", code: "30", operators: [
+        { name: "Cosmote", prefixes: ["69"] },
+        { name: "Vodafone", prefixes: ["69"] },
+        { name: "Nova", prefixes: ["69"] }
+      ]},
+      { name: "تركيا", code: "90", operators: [
+        { name: "Turkcell", prefixes: ["530","531"] },
+        { name: "Vodafone", prefixes: ["542","543"] },
+        { name: "Türk Telekom", prefixes: ["550","551"] }
+      ]},
+      { name: "روسيا", code: "7", operators: [
+        { name: "MTS", prefixes: ["910","911"] },
+        { name: "Beeline", prefixes: ["903","905"] },
+        { name: "MegaFon", prefixes: ["920","921"] }
+      ]},
+      { name: "الهند", code: "91", operators: [
+        { name: "Airtel", prefixes: ["98","99"] },
+        { name: "Jio", prefixes: ["70","79"] },
+        { name: "Vi", prefixes: ["96","97"] }
+      ]},
+      { name: "الصين", code: "86", operators: [
+        { name: "China Mobile", prefixes: ["134","135","139"] },
+        { name: "China Unicom", prefixes: ["130","131","186"] },
+        { name: "China Telecom", prefixes: ["133","153","189"] }
+      ]},
+      { name: "اليابان", code: "81", operators: [
+        { name: "NTT Docomo", prefixes: ["90","80"] },
+        { name: "au", prefixes: ["70","80"] },
+        { name: "SoftBank", prefixes: ["80","90"] }
+      ]},
+      { name: "كوريا الجنوبية", code: "82", operators: [
+        { name: "SK Telecom", prefixes: ["10"] },
+        { name: "KT", prefixes: ["10"] },
+        { name: "LG U+", prefixes: ["10"] }
+      ]},
+      { name: "أستراليا", code: "61", operators: [
+        { name: "Telstra", prefixes: ["4"] },
+        { name: "Optus", prefixes: ["4"] },
+        { name: "Vodafone", prefixes: ["4"] }
+      ]},
+      { name: "نيوزيلندا", code: "64", operators: [
+        { name: "Spark", prefixes: ["21"] },
+        { name: "Vodafone", prefixes: ["21"] },
+        { name: "2degrees", prefixes: ["22"] }
+      ]},
+      { name: "البرازيل", code: "55", operators: [
+        { name: "Vivo", prefixes: ["11","21","31"] },
+        { name: "Claro", prefixes: ["11","21","31"] },
+        { name: "TIM", prefixes: ["11","21","31"] }
+      ]},
+      { name: "الأرجنتين", code: "54", operators: [
+        { name: "Movistar", prefixes: ["11"] },
+        { name: "Personal", prefixes: ["11"] },
+        { name: "Claro", prefixes: ["11"] }
+      ]},
+      { name: "المكسيك", code: "52", operators: [
+        { name: "Telcel", prefixes: ["1"] },
+        { name: "Movistar", prefixes: ["1"] },
+        { name: "AT&T", prefixes: ["1"] }
+      ]},
+      { name: "كولومبيا", code: "57", operators: [
+        { name: "Claro", prefixes: ["310","320"] },
+        { name: "Movistar", prefixes: ["315","316"] },
+        { name: "Tigo", prefixes: ["300","301"] }
+      ]},
+      { name: "نيجيريا", code: "234", operators: [
+        { name: "MTN", prefixes: ["803","806"] },
+        { name: "Glo", prefixes: ["805","807"] },
+        { name: "Airtel", prefixes: ["802","808"] },
+        { name: "9mobile", prefixes: ["809","908"] }
+      ]},
+      { name: "جنوب إفريقيا", code: "27", operators: [
+        { name: "Vodacom", prefixes: ["82","83"] },
+        { name: "MTN", prefixes: ["73","83"] },
+        { name: "Cell C", prefixes: ["84"] }
+      ]},
+      { name: "كينيا", code: "254", operators: [
+        { name: "Safaricom", prefixes: ["701","711","721"] },
+        { name: "Airtel", prefixes: ["731","741"] },
+        { name: "Telkom", prefixes: ["771"] }
+      ]},
+      { name: "غانا", code: "233", operators: [
+        { name: "MTN", prefixes: ["24","54"] },
+        { name: "Vodafone", prefixes: ["20","50"] },
+        { name: "AirtelTigo", prefixes: ["26","56"] }
+      ]},
+      { name: "إثيوبيا", code: "251", operators: [
+        { name: "Ethio Telecom", prefixes: ["91","92"] }
+      ]},
+      { name: "تنزانيا", code: "255", operators: [
+        { name: "Vodacom", prefixes: ["74","75"] },
+        { name: "Airtel", prefixes: ["68","78"] },
+        { name: "Tigo", prefixes: ["65","67"] }
+      ]},
+      { name: "أوغندا", code: "256", operators: [
+        { name: "MTN", prefixes: ["77","78"] },
+        { name: "Airtel", prefixes: ["75"] },
+        { name: "UTL", prefixes: ["71"] }
+      ]},
+      { name: "الكاميرون", code: "237", operators: [
+        { name: "MTN", prefixes: ["67","68"] },
+        { name: "Orange", prefixes: ["69"] }
+      ]},
+      { name: "ساحل العاج", code: "225", operators: [
+        { name: "Orange", prefixes: ["07","08"] },
+        { name: "MTN", prefixes: ["05","06"] },
+        { name: "Moov", prefixes: ["01","02"] }
+      ]},
+      { name: "السنغال", code: "221", operators: [
+        { name: "Orange", prefixes: ["77","78"] },
+        { name: "Free", prefixes: ["76"] },
+        { name: "Expresso", prefixes: ["70"] }
+      ]},
+      { name: "ماليزيا", code: "60", operators: [
+        { name: "Maxis", prefixes: ["12","17"] },
+        { name: "Celcom", prefixes: ["13","19"] },
+        { name: "Digi", prefixes: ["10","16"] }
+      ]},
+      { name: "إندونيسيا", code: "62", operators: [
+        { name: "Telkomsel", prefixes: ["811","812","813"] },
+        { name: "Indosat", prefixes: ["815","816"] },
+        { name: "XL", prefixes: ["817","818"] }
+      ]},
+      { name: "الفلبين", code: "63", operators: [
+        { name: "Globe", prefixes: ["917","927"] },
+        { name: "Smart", prefixes: ["918","928"] },
+        { name: "Sun", prefixes: ["922","932"] }
+      ]},
+      { name: "تايلاند", code: "66", operators: [
+        { name: "AIS", prefixes: ["8"] },
+        { name: "TrueMove", prefixes: ["8","9"] },
+        { name: "DTAC", prefixes: ["8","9"] }
+      ]},
+      { name: "فيتنام", code: "84", operators: [
+        { name: "Viettel", prefixes: ["96","97","98"] },
+        { name: "Vinaphone", prefixes: ["91","94"] },
+        { name: "Mobifone", prefixes: ["90","93"] }
+      ]},
+      { name: "بنغلاديش", code: "880", operators: [
+        { name: "Grameenphone", prefixes: ["17"] },
+        { name: "Robi", prefixes: ["18"] },
+        { name: "Banglalink", prefixes: ["19"] },
+        { name: "Teletalk", prefixes: ["15"] }
+      ]},
+      { name: "باكستان", code: "92", operators: [
+        { name: "Jazz", prefixes: ["30","32"] },
+        { name: "Zong", prefixes: ["31","33"] },
+        { name: "Telenor", prefixes: ["34"] },
+        { name: "Ufone", prefixes: ["33"] }
+      ]},
+      { name: "أفغانستان", code: "93", operators: [
+        { name: "Afghan Wireless", prefixes: ["70"] },
+        { name: "Roshan", prefixes: ["79"] },
+        { name: "MTN", prefixes: ["77"] }
+      ]},
+      { name: "إيران", code: "98", operators: [
+        { name: "Hamrah-e Aval", prefixes: ["91"] },
+        { name: "Irancell", prefixes: ["93"] },
+        { name: "RighTel", prefixes: ["92"] }
+      ]},
+      { name: "أوكرانيا", code: "380", operators: [
+        { name: "Kyivstar", prefixes: ["67","68"] },
+        { name: "Vodafone", prefixes: ["50","66"] },
+        { name: "Lifecell", prefixes: ["63","93"] }
+      ]},
+      { name: "رومانيا", code: "40", operators: [
+        { name: "Orange", prefixes: ["74","75"] },
+        { name: "Vodafone", prefixes: ["72","73"] },
+        { name: "Digi", prefixes: ["77"] }
+      ]},
+      { name: "بلغاريا", code: "359", operators: [
+        { name: "A1", prefixes: ["88"] },
+        { name: "Telenor", prefixes: ["89"] },
+        { name: "Vivacom", prefixes: ["87"] }
+      ]},
+      { name: "صربيا", code: "381", operators: [
+        { name: "Telenor", prefixes: ["62","63"] },
+        { name: "Telekom Srbija", prefixes: ["64","65"] },
+        { name: "A1", prefixes: ["60","61"] }
+      ]},
+      { name: "كرواتيا", code: "385", operators: [
+        { name: "T-Hrvatski Telekom", prefixes: ["98","99"] },
+        { name: "A1", prefixes: ["91","92"] },
+        { name: "Telemach", prefixes: ["95"] }
+      ]},
+      { name: "سلوفينيا", code: "386", operators: [
+        { name: "Telekom Slovenije", prefixes: ["40","41"] },
+        { name: "A1", prefixes: ["30","31"] },
+        { name: "Telemach", prefixes: ["70"] }
+      ]},
+      { name: "المجر", code: "36", operators: [
+        { name: "Magyar Telekom", prefixes: ["30"] },
+        { name: "Yettel", prefixes: ["20"] },
+        { name: "Vodafone", prefixes: ["70"] }
+      ]},
+      { name: "التشيك", code: "420", operators: [
+        { name: "T-Mobile", prefixes: ["73","77"] },
+        { name: "O2", prefixes: ["72","79"] },
+        { name: "Vodafone", prefixes: ["77","70"] }
+      ]},
+      { name: "سلوفاكيا", code: "421", operators: [
+        { name: "Orange", prefixes: ["905","906"] },
+        { name: "Telekom", prefixes: ["903","904"] },
+        { name: "O2", prefixes: ["940"] }
+      ]},
+      { name: "البرتغال", code: "351", operators: [
+        { name: "MEO", prefixes: ["91","92"] },
+        { name: "Vodafone", prefixes: ["91","93"] },
+        { name: "NOS", prefixes: ["93"] }
+      ]},
+      { name: "أيرلندا", code: "353", operators: [
+        { name: "Vodafone", prefixes: ["87"] },
+        { name: "Three", prefixes: ["83","86"] },
+        { name: "Eir", prefixes: ["85"] }
+      ]},
+      { name: "النمسا", code: "43", operators: [
+        { name: "A1", prefixes: ["664"] },
+        { name: "T-Mobile", prefixes: ["676"] },
+        { name: "Drei", prefixes: ["660"] }
+      ]},
+      { name: "إسرائيل", code: "972", operators: [
+        { name: "Pelephone", prefixes: ["50"] },
+        { name: "Cellcom", prefixes: ["52"] },
+        { name: "Partner", prefixes: ["54"] },
+        { name: "Hot Mobile", prefixes: ["53"] }
+      ]},
+      { name: "قبرص", code: "357", operators: [
+        { name: "Cyta", prefixes: ["99"] },
+        { name: "Epic", prefixes: ["96"] },
+        { name: "PrimeTel", prefixes: ["95"] }
+      ]},
+      { name: "مالطا", code: "356", operators: [
+        { name: "GO", prefixes: ["99"] },
+        { name: "Melita", prefixes: ["79"] },
+        { name: "Epic", prefixes: ["77"] }
+      ]},
+      { name: "آيسلندا", code: "354", operators: [
+        { name: "Síminn", prefixes: ["6","7","8"] },
+        { name: "Vodafone", prefixes: ["6","7","8"] },
+        { name: "Nova", prefixes: ["6","7","8"] }
+      ]},
+      { name: "لوكسمبورغ", code: "352", operators: [
+        { name: "POST", prefixes: ["621"] },
+        { name: "Tango", prefixes: ["691"] },
+        { name: "Orange", prefixes: ["661"] }
+      ]},
+      { name: "سنغافورة", code: "65", operators: [
+        { name: "Singtel", prefixes: ["8","9"] },
+        { name: "StarHub", prefixes: ["8","9"] },
+        { name: "M1", prefixes: ["8","9"] }
+      ]},
+      { name: "هونغ كونغ", code: "852", operators: [
+        { name: "CSL", prefixes: ["5","6","9"] },
+        { name: "3", prefixes: ["5","6","9"] },
+        { name: "SmarTone", prefixes: ["5","6","9"] }
+      ]},
+      { name: "تايوان", code: "886", operators: [
+        { name: "Chunghwa", prefixes: ["9"] },
+        { name: "Taiwan Mobile", prefixes: ["9"] },
+        { name: "FarEasTone", prefixes: ["9"] }
+      ]},
+      { name: "سريلانكا", code: "94", operators: [
+        { name: "Dialog", prefixes: ["77"] },
+        { name: "Mobitel", prefixes: ["71"] },
+        { name: "Hutch", prefixes: ["78"] }
+      ]},
+      { name: "ميانمار", code: "95", operators: [
+        { name: "MPT", prefixes: ["9"] },
+        { name: "Ooredoo", prefixes: ["9"] },
+        { name: "Telenor", prefixes: ["9"] }
+      ]},
+      { name: "نيبال", code: "977", operators: [
+        { name: "Ncell", prefixes: ["980","981"] },
+        { name: "Nepal Telecom", prefixes: ["984","985"] }
+      ]},
+      { name: "كمبوديا", code: "855", operators: [
+        { name: "Smart", prefixes: ["10","15"] },
+        { name: "Cellcard", prefixes: ["12","17"] },
+        { name: "Metfone", prefixes: ["88","97"] }
+      ]},
+      { name: "لاوس", code: "856", operators: [
+        { name: "Unitel", prefixes: ["20"] },
+        { name: "Lao Telecom", prefixes: ["20"] },
+        { name: "Beeline", prefixes: ["20"] }
+      ]},
+      { name: "منغوليا", code: "976", operators: [
+        { name: "Mobicom", prefixes: ["99"] },
+        { name: "Unitel", prefixes: ["88"] },
+        { name: "Skytel", prefixes: ["94"] }
+      ]},
+      { name: "كازاخستان", code: "7", operators: [
+        { name: "Beeline", prefixes: ["705","777"] },
+        { name: "Kcell", prefixes: ["701","702"] },
+        { name: "Tele2", prefixes: ["707","747"] }
+      ]},
+      { name: "أوزبكستان", code: "998", operators: [
+        { name: "Ucell", prefixes: ["93","94"] },
+        { name: "Beeline", prefixes: ["90","91"] },
+        { name: "UMS", prefixes: ["97"] }
+      ]},
+      { name: "أذربيجان", code: "994", operators: [
+        { name: "Azercell", prefixes: ["50","51"] },
+        { name: "Bakcell", prefixes: ["55"] },
+        { name: "Nar", prefixes: ["70"] }
+      ]},
+      { name: "جورجيا", code: "995", operators: [
+        { name: "Magticom", prefixes: ["591","595"] },
+        { name: "Geocell", prefixes: ["577","578"] },
+        { name: "Beeline", prefixes: ["579"] }
+      ]},
+      { name: "أرمينيا", code: "374", operators: [
+        { name: "Viva-MTS", prefixes: ["93","94"] },
+        { name: "Team", prefixes: ["91","96"] },
+        { name: "Ucom", prefixes: ["55","95"] }
+      ]},
+      { name: "مولدوفا", code: "373", operators: [
+        { name: "Orange", prefixes: ["68","69"] },
+        { name: "Moldcell", prefixes: ["78","79"] },
+        { name: "Unité", prefixes: ["60","61"] }
+      ]},
+      { name: "ألبانيا", code: "355", operators: [
+        { name: "Vodafone", prefixes: ["69"] },
+        { name: "One", prefixes: ["68"] },
+        { name: "ALBtelecom", prefixes: ["67"] }
+      ]},
+      { name: "مقدونيا الشمالية", code: "389", operators: [
+        { name: "T-Mobile", prefixes: ["70","71"] },
+        { name: "A1", prefixes: ["75","76"] },
+        { name: "Lycamobile", prefixes: ["77"] }
+      ]},
+      { name: "البوسنة والهرسك", code: "387", operators: [
+        { name: "BH Telecom", prefixes: ["61","62"] },
+        { name: "m:tel", prefixes: ["65","66"] },
+        { name: "HT Eronet", prefixes: ["63"] }
+      ]}
+    ];
+
+    const DIGITS_AFTER_PREFIX = 7;
+
+    // DOM elements
+    const countrySelect = document.getElementById('countrySelect');
+    const operatorSelect = document.getElementById('operatorSelect');
+    const operatorStep = document.getElementById('operatorStep');
+    const countStep = document.getElementById('countStep');
+    const generateBtn = document.getElementById('generateBtn');
+    const contactCount = document.getElementById('contactCount');
+    const prefixTags = document.getElementById('prefixTags');
+    const messageBox = document.getElementById('messageBox');
+
+    // Populate country dropdown
+    function populateCountries() {
+      countries.forEach((country, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${country.name} (+${country.code})`;
+        countrySelect.appendChild(option);
+      });
+    }
+
+    // Update operator dropdown and prefix preview based on selected country
+    function updateOperators() {
+      const index = countrySelect.value;
+      if (index === '') {
+        operatorStep.style.display = 'none';
+        countStep.style.display = 'none';
+        generateBtn.disabled = true;
+        return;
+      }
+
+      const country = countries[parseInt(index)];
+      operatorStep.style.display = 'block';
+      countStep.style.display = 'block';
+
+      // Clear previous operator options except "all"
+      operatorSelect.innerHTML = '<option value="all">🌐 جميع المقدمات (عشوائي)</option>';
+
+      // Add each operator
+      country.operators.forEach((op, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = op.name;
+        operatorSelect.appendChild(opt);
+      });
+
+      // Update prefix preview tags
+      let allPrefixes = [];
+      country.operators.forEach(op => {
+        op.prefixes.forEach(p => allPrefixes.push(p));
+      });
+      prefixTags.innerHTML = allPrefixes.map(p => `<span class="operator-tag">${p}</span>`).join(' ');
+
+      // Enable generate button if count is valid
+      validateGenerateButton();
+    }
+
+    function validateGenerateButton() {
+      const countryChosen = countrySelect.value !== '';
+      const count = parseInt(contactCount.value);
+      const validCount = !isNaN(count) && count > 0 && count <= 5000;
+      generateBtn.disabled = !(countryChosen && validCount);
+    }
+
+    // Random digit generator
+    function randomDigits(length) {
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += Math.floor(Math.random() * 10).toString();
+      }
+      return result;
+    }
+
+    // Generate contacts and trigger CSV download
+    function generateCSV() {
+      const countryIndex = countrySelect.value;
+      if (countryIndex === '') return;
+      const country = countries[parseInt(countryIndex)];
+      const operatorChoice = operatorSelect.value; // "all" or index
+      const count = parseInt(contactCount.value);
+      if (isNaN(count) || count < 1) return;
+
+      const contacts = [];
+      for (let i = 0; i < count; i++) {
+        let prefix;
+        if (operatorChoice === 'all') {
+          // Random operator, then random prefix from that operator
+          const randomOp = country.operators[Math.floor(Math.random() * country.operators.length)];
+          prefix = randomOp.prefixes[Math.floor(Math.random() * randomOp.prefixes.length)];
+        } else {
+          const op = country.operators[parseInt(operatorChoice)];
+          prefix = op.prefixes[Math.floor(Math.random() * op.prefixes.length)];
+        }
+        const number = `+${country.code}${prefix}${randomDigits(DIGITS_AFTER_PREFIX)}`;
+        const name = `Contact_${String(i+1).padStart(4, '0')}`;
+        contacts.push([name, number]);
+      }
+
+      // Build CSV content
+      let csvContent = "Name,Phone\n";
+      contacts.forEach(row => {
+        csvContent += `"${row[0]}","${row[1]}"\n`;
+      });
+
+      // Download via Blob
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'contacts.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      // Show success message
+      messageBox.style.display = 'flex';
+      messageBox.innerHTML = `✅ تم إنشاء ${count} جهة اتصال وحفظ الملف CSV. ارفعه إلى Google Contacts.`;
+      setTimeout(() => {
+        messageBox.style.display = 'none';
+      }, 6000);
+    }
+
+    // Event listeners
+    countrySelect.addEventListener('change', () => {
+      updateOperators();
+      validateGenerateButton();
+    });
+
+    operatorSelect.addEventListener('change', validateGenerateButton);
+    contactCount.addEventListener('input', validateGenerateButton);
+
+    generateBtn.addEventListener('click', generateCSV);
+
+    // Initialize
+    populateCountries();
+    // Default hide message
+    messageBox.style.display = 'none';
+    generateBtn.disabled = true;
+  })();
+</script>
+</body>
+</html>
