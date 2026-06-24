@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="مولد جهات الاتصال الدولية - توليد أرقام هواتف بمقدمات الدول والموزعين">
+    <title>🌐 مولد جهات الاتصال الدولية</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- خلفية متحركة -->
+    <div class="animated-bg">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <!-- زر تبديل الثيم -->
+    <button class="theme-toggle" id="themeToggle" aria-label="تبديل الثيم">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="container">
+        <!-- الهيدر -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-globe-americas"></i>
+                <h1>مولد جهات الاتصال</h1>
+            </div>
+            <p class="subtitle">توليد أرقام هواتف بمقدمات 100 دولة مع دعم Google Contacts</p>
+        </header>
+
+        <!-- الخطوات -->
+        <div class="steps-indicator">
+            <div class="step active" data-step="1">
+                <div class="step-number">1</div>
+                <span>الدولة</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="2">
+                <div class="step-number">2</div>
+                <span>الموزع</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="3">
+                <div class="step-number">3</div>
+                <span>الإعدادات</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="4">
+                <div class="step-number">4</div>
+                <span>التصدير</span>
+            </div>
+        </div>
+
+        <!-- البطاقة الرئيسية -->
+        <main class="card">
+            <!-- الخطوة 1: اختيار الدولة -->
+            <section class="step-content active" id="step1">
+                <div class="step-header">
+                    <i class="fas fa-flag"></i>
+                    <h2>اختر الدولة</h2>
+                </div>
+
+                <!-- البحث -->
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="countrySearch" placeholder="ابحث عن دولة...">
+                </div>
+
+                <!-- فلترة حسب المنطقة -->
+                <div class="filter-tabs">
+                    <button class="filter-btn active" data-region="all">الكل</button>
+                    <button class="filter-btn" data-region="arab">عربي</button>
+                    <button class="filter-btn" data-region="europe">أوروبا</button>
+                    <button class="filter-btn" data-region="asia">آسيا</button>
+                    <button class="filter-btn" data-region="americas">الأمريكتين</button>
+                    <button class="filter-btn" data-region="africa">أفريقيا</button>
+                </div>
+
+                <!-- قائمة الدول -->
+                <div class="countries-grid" id="countriesGrid">
+                    <!-- يتم ملؤها ديناميكياً -->
+                </div>
+            </section>
+
+            <!-- الخطوة 2: اختيار الموزع -->
+            <section class="step-content" id="step2">
+                <div class="step-header">
+                    <i class="fas fa-signal"></i>
+                    <h2>اختر شركة الاتصالات</h2>
+                </div>
+
+                <div class="selected-country-info" id="selectedCountryInfo">
+                    <!-- يتم ملؤها ديناميكياً -->
+                </div>
+
+                <div class="operators-list" id="operatorsList">
+                    <!-- يتم ملؤها ديناميكياً -->
+                </div>
+            </section>
+
+            <!-- الخطوة 3: الإعدادات -->
+            <section class="step-content" id="step3">
+                <div class="step-header">
+                    <i class="fas fa-cog"></i>
+                    <h2>الإعدادات</h2>
+                </div>
+
+                <div class="form-group">
+                    <label for="countInput">
+                        <i class="fas fa-hashtag"></i>
+                        عدد الأرقام
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="number" id="countInput" value="100" min="1" max="10000">
+                        <div class="quick-counts">
+                            <button data-count="10">10</button>
+                            <button data-count="50">50</button>
+                            <button data-count="100">100</button>
+                            <button data-count="500">500</button>
+                            <button data-count="1000">1000</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="namePrefix">
+                            <i class="fas fa-tag"></i>
+                            بادئة الاسم (اختياري)
+                        </label>
+                        <input type="text" id="namePrefix" placeholder="مثال: عميل">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="groupName">
+                            <i class="fas fa-users"></i>
+                            اسم المجموعة
+                        </label>
+                        <input type="text" id="groupName" value="myContacts" placeholder="myContacts">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">
+                        <i class="fas fa-sticky-note"></i>
+                        ملاحظات (اختياري)
+                    </label>
+                    <textarea id="notes" placeholder="أضف ملاحظات لجهات الاتصال..." rows="2"></textarea>
+                </div>
+
+                <div class="options-grid">
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="useRandomNames" checked>
+                        <div class="checkbox-content">
+                            <i class="fas fa-user-friends"></i>
+                            <div>
+                                <strong>أسماء عشوائية</strong>
+                                <span>أسماء متنوعة بدلاً من أرقام</span>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="addEmail">
+                        <div class="checkbox-content">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>إضافة بريد إلكتروني</strong>
+                                <span>بريد وهمي لكل جهة اتصال</span>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="useLuhn">
+                        <div class="checkbox-content">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <strong>خوارزمية Luhn</strong>
+                                <span>أرقام تبدو واقعية أكثر</span>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="uniqueNumbers" checked>
+                        <div class="checkbox-content">
+                            <i class="fas fa-fingerprint"></i>
+                            <div>
+                                <strong>أرقام فريدة</strong>
+                                <span>منع التكرار</span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </section>
+
+            <!-- الخطوة 4: التصدير -->
+            <section class="step-content" id="step4">
+                <div class="step-header">
+                    <i class="fas fa-download"></i>
+                    <h2>التوليد والتصدير</h2>
+                </div>
+
+                <!-- شريط التقدم -->
+                <div class="progress-container" id="progressContainer" style="display: none;">
+                    <div class="progress-info">
+                        <span id="progressText">جاري التوليد...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <!-- ملخص الإعدادات -->
+                <div class="summary-card" id="summaryCard">
+                    <!-- يتم ملؤها ديناميكياً -->
+                </div>
+
+                <!-- أزرار التصدير -->
+                <div class="export-buttons">
+                    <button class="btn btn-primary btn-lg" id="generateBtn">
+                        <i class="fas fa-magic"></i>
+                        <span>توليد الأرقام</span>
+                    </button>
+
+                    <div class="export-formats" id="exportFormats" style="display: none;">
+                        <h3><i class="fas fa-file-export"></i> اختر صيغة التصدير</h3>
+                        <div class="format-buttons">
+                            <button class="btn btn-vcf" id="exportVcf">
+                                <i class="fas fa-address-card"></i>
+                                <div>
+                                    <strong>VCF</strong>
+                                    <span>الأفضل لـ Google</span>
+                                </div>
+                            </button>
+                            <button class="btn btn-csv" id="exportCsv">
+                                <i class="fas fa-file-csv"></i>
+                                <div>
+                                    <strong>CSV</strong>
+                                    <span>متوافق مع Excel</span>
+                                </div>
+                            </button>
+                            <button class="btn btn-json" id="exportJson">
+                                <i class="fas fa-code"></i>
+                                <div>
+                                    <strong>JSON</strong>
+                                    <span>للمطورين</span>
+                                </div>
+                            </button>
+                            <button class="btn btn-all" id="exportAll">
+                                <i class="fas fa-layer-group"></i>
+                                <div>
+                                    <strong>الكل</strong>
+                                    <span>جميع الصيغ</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الإحصائيات -->
+                <div class="stats-container" id="statsContainer" style="display: none;">
+                    <h3><i class="fas fa-chart-bar"></i> الإحصائيات</h3>
+                    <div class="stats-grid" id="statsGrid">
+                        <!-- يتم ملؤها ديناميكياً -->
+                    </div>
+                </div>
+
+                <!-- معاينة -->
+                <div class="preview-container" id="previewContainer" style="display: none;">
+                    <div class="preview-header">
+                        <h3><i class="fas fa-eye"></i> معاينة (أول 10 أرقام)</h3>
+                        <button class="btn btn-sm" id="togglePreview">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="preview-list" id="previewList">
+                        <!-- يتم ملؤها ديناميكياً -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- أزرار التنقل -->
+            <div class="navigation-buttons">
+                <button class="btn btn-secondary" id="prevBtn" style="display: none;">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>السابق</span>
+                </button>
+                <button class="btn btn-primary" id="nextBtn">
+                    <span>التالي</span>
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        </main>
+
+        <!-- الفوتر -->
+        <footer class="footer">
+            <p>
+                <i class="fas fa-heart"></i>
+                صُنع بعناية | 
+                <a href="https://contacts.google.com" target="_blank">
+                    <i class="fab fa-google"></i> Google Contacts
+                </a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
