@@ -951,8 +951,6 @@ body {
 </div>
 
 <div class="toast-container" id="toastContainer"></div>
-
-<script>
 // ==================== الإعدادات ====================
 const CONFIG = {
     API_BASE: 'https://api.github.com',
@@ -960,22 +958,13 @@ const CONFIG = {
     GITHUB_BASE: 'https://github.com'
 };
 
-// ==================== الحالة ====================
 const state = {
-    owner: '',
-    repo: '',
-    branch: 'main',
-    currentPath: '',
-    files: [],
-    viewMode: 'list',
-    currentFile: null,
-    currentContent: null,
-    htmlBlobUrl: null,
-    htmlContent: null,
-    currentTextContent: null
+    owner: '', repo: '', branch: 'main', currentPath: '',
+    files: [], viewMode: 'list',
+    currentFile: null, currentContent: null,
+    htmlBlobUrl: null, htmlContent: null, currentTextContent: null
 };
 
-// ==================== أيقونات الملفات ====================
 const FILE_ICONS = {
     folder: { icon: 'fa-folder', class: 'folder' },
     html: { icon: 'fa-file-code', class: 'html' },
@@ -994,7 +983,6 @@ const CODE_EXTS = ['js', 'ts', 'py', 'java', 'cpp', 'c', 'h', 'cs', 'go', 'rs', 
 const TEXT_EXTS = ['txt', 'log', 'env', 'gitignore', 'dockerignore', 'editorconfig'];
 const ARCHIVE_EXTS = ['zip', 'rar', '7z', 'tar', 'gz'];
 
-// ==================== التهيئة ====================
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 بدء تشغيل مستعرض الملفات');
     initTheme();
@@ -1002,149 +990,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     await detectRepository();
 });
 
-// ==================== كشف المستودع ====================
 async function detectRepository() {
     const hostname = window.location.hostname;
     const pathname = window.location.pathname;
-    const fullUrl = window.location.href;
     
-    console.log('📍 URL الحالي:', fullUrl);
-    console.log('🌐 Hostname:', hostname);
-    console.log('📂 Pathname:', pathname);
+    document.getElementById('debugUrl').textContent = window.location.href;
     
-    // تحديث معلومات التشخيص
-    document.getElementById('debugUrl').textContent = fullUrl;
-    
-    // حالة 1: GitHub Pages - username.github.io/repo-name/
     if (hostname.endsWith('.github.io')) {
         const username = hostname.replace('.github.io', '');
         const pathParts = pathname.split('/').filter(Boolean);
-        
         state.owner = username;
-        
-        if (pathParts.length > 0) {
-            state.repo = pathParts[0];
-        } else {
-            // المستخدم على username.github.io فقط
-            state.repo = username + '.github.io';
-        }
-        
+        state.repo = pathParts.length > 0 ? pathParts[0] : username + '.github.io';
         console.log('✅ GitHub Pages detected:', state.owner + '/' + state.repo);
-        
-    } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        // حالة 2: بيئة محلية - لا يمكن العمل بدون إعدادات
-        showError(
-            'بيئة محلية',
-            'أنت تعمل على localhost. هذا التطبيق يحتاج إلى GitHub Pages ليعمل تلقائياً.',
-            [
-                'ارفع الملفات إلى مستودع على GitHub',
-                'فعّل GitHub Pages من Settings → Pages',
-                'افتح الرابط: <code>https://username.github.io/repo-name/</code>'
-            ]
-        );
-        
-        document.getElementById('debugOwner').textContent = 'localhost (غير مدعوم)';
-        document.getElementById('debugRepo').textContent = '-';
-        document.getElementById('debugApiStatus').innerHTML = '<span class="status-error">❌ غير مدعوم</span>';
-        return;
-        
     } else {
-        // حالة 3: نطاق مخصص أو بيئة أخرى
-        showError(
-            'نطاق غير مدعوم',
-            `النطاق الحالي (${hostname}) لا يدعم الكشف التلقائي.`,
-            [
-                'استخدم GitHub Pages: <code>username.github.io/repo-name</code>',
-                'أو أضف إعدادات يدوية في الكود'
-            ]
-        );
-        
-        document.getElementById('debugOwner').textContent = hostname;
-        document.getElementById('debugRepo').textContent = 'غير معروف';
-        document.getElementById('debugApiStatus').innerHTML = '<span class="status-error">❌ غير مدعوم</span>';
+        showError('نطاق غير مدعوم', `النطاق ${hostname} لا يدعم الكشف التلقائي`, []);
         return;
     }
     
-    // تحديث واجهة التشخيص
     document.getElementById('debugOwner').textContent = state.owner;
     document.getElementById('debugRepo').textContent = state.repo;
     
-    // تحديث رابط المستودع
     const repoBadge = document.getElementById('repoBadge');
     const repoLink = document.getElementById('repoLink');
     repoLink.textContent = `${state.owner} / ${state.repo}`;
     repoLink.href = `${CONFIG.GITHUB_BASE}/${state.owner}/${state.repo}`;
     repoBadge.style.display = 'inline-flex';
     
-    // محاولة تحميل المستودع
     await tryLoadRepository();
 }
 
-// ==================== محاولة التحميل مع fallback ====================
 async function tryLoadRepository() {
     updateApiStatus('جاري الفحص...', 'warn');
-    
-    // 1. محاولة الحصول على معلومات المستودع
     try {
         const repoInfo = await fetchRepoInfo();
         state.branch = repoInfo.default_branch || 'main';
-        console.log('✅ المستودع موجود، الفرع:', state.branch);
         updateApiStatus('✅ متصل', 'ok');
-        
-        // تحميل الفروع والمحتوى
         await loadDirectory('');
-        
     } catch (error) {
         console.error('❌ خطأ:', error);
-        
         if (error.message.includes('404')) {
-            // 2. المستودع غير موجود - ربما الاسم خاطئ
-            showError(
-                'المستودع غير موجود',
-                `لم يتم العثور على المستودع: <code>${state.owner}/${state.repo}</code>`,
-                [
-                    'تأكد من اسم المستودع صحيح',
-                    'تأكد أن المستودع <strong>Public</strong> (عام)',
-                    'تأكد أنك رفعت ملفات إلى المستودع',
-                    'الرابط الصحيح: <code>https://' + state.owner + '.github.io/' + state.repo + '/</code>'
-                ]
-            );
-            updateApiStatus('❌ 404 - غير موجود', 'error');
-            
-        } else if (error.message.includes('403') || error.message.includes('rate limit')) {
-            // 3. تجاوز حد API
-            showError(
-                'تم تجاوز حد GitHub API',
-                'لقد تجاوزت الحد المسموح (60 طلب/ساعة). انتظر ساعة أو استخدم Token.',
-                [
-                    'انتظر 60 دقيقة وحاول مرة أخرى',
-                    'أو أضف GitHub Token في الكود لزيادة الحد إلى 5000 طلب/ساعة',
-                    'افتح Console (F12) لمزيد من التفاصيل'
-                ]
-            );
+            showError('المستودع غير موجود', `لم يتم العثور على: ${state.owner}/${state.repo}`, []);
+            updateApiStatus('❌ 404', 'error');
+        } else if (error.message.includes('403')) {
+            showError('تم تجاوز حد API', 'انتظر ساعة أو استخدم Token', []);
             updateApiStatus('⚠️ Rate Limit', 'warn');
-            
-        } else if (error.message.includes('401')) {
-            showError(
-                'المستودع خاص',
-                'هذا المستودع خاص (Private). التطبيق يعمل فقط مع المستودعات العامة.',
-                [
-                    'اجعل المستودع Public من Settings',
-                    'أو أضف GitHub Token مع صلاحيات repo'
-                ]
-            );
-            updateApiStatus('❌ 401 - خاص', 'error');
-            
         } else {
-            showError(
-                'خطأ في الاتصال',
-                error.message,
-                [
-                    'تحقق من اتصالك بالإنترنت',
-                    'افتح Console (F12) لمزيد من التفاصيل',
-                    'حاول مرة أخرى بعد قليل'
-                ]
-            );
+            showError('خطأ', error.message, []);
             updateApiStatus('❌ خطأ', 'error');
         }
     }
@@ -1157,27 +1048,9 @@ function updateApiStatus(text, type) {
     document.getElementById('debugBranch').textContent = state.branch || '-';
 }
 
-// ==================== GitHub API ====================
 async function fetchRepoInfo() {
-    const url = `${CONFIG.API_BASE}/repos/${state.owner}/${state.repo}`;
-    console.log('🔍 فحص المستودع:', url);
-    
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-        const status = response.status;
-        if (status === 404) throw new Error('404 - المستودع غير موجود');
-        if (status === 403) {
-            const data = await response.json().catch(() => ({}));
-            if (data.message && data.message.includes('rate limit')) {
-                throw new Error('rate limit - تم تجاوز حد API');
-            }
-            throw new Error('403 - ممنوع');
-        }
-        if (status === 401) throw new Error('401 - غير مصرح');
-        throw new Error(`HTTP ${status}`);
-    }
-    
+    const response = await fetch(`${CONFIG.API_BASE}/repos/${state.owner}/${state.repo}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
 }
 
@@ -1187,46 +1060,28 @@ async function loadDirectory(path = '') {
     hideError();
     
     try {
-        // إصلاح: إزالة الـ trailing slash
         const cleanPath = path.replace(/\/$/, '');
         const url = `${CONFIG.API_BASE}/repos/${state.owner}/${state.repo}/contents/${cleanPath}?ref=${state.branch}`;
         console.log('📂 تحميل المجلد:', url);
         
         const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const files = await response.json();
+        if (!Array.isArray(files)) throw new Error('استجابة غير متوقعة');
         
-        if (!Array.isArray(files)) {
-            throw new Error('استجابة غير متوقعة من API');
-        }
-        
-        // ترتيب: المجلدات أولاً
         state.files = files.sort((a, b) => {
             if (a.type === b.type) return a.name.localeCompare(b.name);
             return a.type === 'dir' ? -1 : 1;
         });
         
         console.log(`✅ تم تحميل ${files.length} عنصر`);
-        
         renderFiles('');
         updateBreadcrumbs();
         updatePathInfo();
-        
     } catch (error) {
         console.error('❌ خطأ في التحميل:', error);
-        showError(
-            'فشل تحميل المجلد',
-            error.message,
-            [
-                'تحقق من اتصالك بالإنترنت',
-                'ربما تم تجاوز حد API - انتظر دقيقة',
-                'افتح Console (F12) للتفاصيل'
-            ]
-        );
+        showError('فشل التحميل', error.message, []);
     } finally {
         showLoading(false);
     }
@@ -1239,7 +1094,6 @@ async function fetchFileContent(path) {
     return response.json();
 }
 
-// ==================== العرض ====================
 function renderFiles(query = '') {
     const container = document.getElementById('filesList');
     const emptyState = document.getElementById('emptyState');
@@ -1251,24 +1105,15 @@ function renderFiles(query = '') {
     
     if (files.length === 0) {
         container.innerHTML = '';
+        emptyState.style.display = query ? 'none' : 'block';
         if (query) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-search"></i>
-                    <h3>لا توجد نتائج</h3>
-                    <p>جرب كلمة بحث مختلفة</p>
-                </div>
-            `;
-            emptyState.style.display = 'none';
-        } else {
-            emptyState.style.display = 'block';
+            container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><h3>لا توجد نتائج</h3></div>`;
         }
         return;
     }
     
     emptyState.style.display = 'none';
     container.className = `files-list ${state.viewMode === 'grid' ? 'grid-view' : ''}`;
-    
     container.innerHTML = files.map(file => createFileItem(file)).join('');
     
     container.querySelectorAll('.file-item').forEach((item, idx) => {
@@ -1303,8 +1148,14 @@ function renderFiles(query = '') {
     });
 }
 
+// ✅ الدالة المُصلّحة
 function createFileItem(file) {
-    const icon = getFileIcon(file);
+    let icon = getFileIcon(file);
+    if (!icon) {
+        console.warn('⚠️ أيقونة غير معروفة:', file.name);
+        icon = FILE_ICONS.file;
+    }
+    
     const size = file.size ? formatSize(file.size) : '-';
     const isDir = file.type === 'dir';
     
@@ -1333,31 +1184,61 @@ function createFileItem(file) {
     `;
 }
 
+// ✅ الدالة المُصلّحة
 function getFileIcon(file) {
     if (file.type === 'dir') return FILE_ICONS.folder;
-    const ext = file.name.split('.').pop().toLowerCase();
+    
+    const name = file.name;
+    
+    // ملفات خاصة
+    const specialNames = {
+        'readme': 'md', 'license': 'txt', 'licence': 'txt',
+        'makefile': 'txt', 'dockerfile': 'txt', 'gemfile': 'txt',
+        'rakefile': 'txt', 'procfile': 'txt',
+        'package.json': 'json', 'composer.json': 'json', 'bower.json': 'json',
+        '.gitignore': 'txt', '.gitattributes': 'txt', '.editorconfig': 'txt',
+        '.env': 'txt', '.htaccess': 'txt', '.eslintrc': 'json',
+        '.prettierrc': 'json', '.babelrc': 'json', '.npmignore': 'txt'
+    };
+    
+    const lowerName = name.toLowerCase();
+    if (specialNames[lowerName]) {
+        const mapped = specialNames[lowerName];
+        if (mapped === 'md') return FILE_ICONS.markdown;
+        if (mapped === 'json') return FILE_ICONS.code;
+        return FILE_ICONS.file;
+    }
+    
+    // استخراج الامتداد
+    let ext = '';
+    const dotIndex = name.lastIndexOf('.');
+    
+    if (dotIndex > 0) {
+        ext = name.substring(dotIndex + 1).toLowerCase();
+    } else if (dotIndex === 0) {
+        return FILE_ICONS.file;
+    } else {
+        return FILE_ICONS.file;
+    }
+    
     if (IMAGE_EXTS.includes(ext)) return FILE_ICONS.image;
     if (ext === 'html' || ext === 'htm') return FILE_ICONS.html;
-    if (ext === 'md') return FILE_ICONS.markdown;
+    if (ext === 'md' || ext === 'markdown') return FILE_ICONS.markdown;
     if (CODE_EXTS.includes(ext)) return FILE_ICONS.code;
     if (TEXT_EXTS.includes(ext)) return FILE_ICONS.file;
     if (ARCHIVE_EXTS.includes(ext)) return FILE_ICONS.archive;
     if (['json', 'xml', 'yaml', 'yml', 'toml'].includes(ext)) return FILE_ICONS.code;
+    
     return FILE_ICONS.file;
 }
 
 function handleFileClick(file) {
-    if (file.type === 'dir') {
-        loadDirectory(file.path);
-    } else {
-        openFilePreview(file);
-    }
+    if (file.type === 'dir') loadDirectory(file.path);
+    else openFilePreview(file);
 }
 
-// ==================== معاينة الملف ====================
 async function openFilePreview(file) {
     showLoading(true);
-    
     try {
         const content = await fetchFileContent(file.path);
         const ext = file.name.split('.').pop().toLowerCase();
@@ -1386,11 +1267,8 @@ async function openFilePreview(file) {
             const decoded = atob(content.content);
             const blob = new Blob([decoded], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
-            
             previewContent.innerHTML = `
-                <div id="previewRendered">
-                    <iframe src="${url}" sandbox="allow-scripts"></iframe>
-                </div>
+                <div id="previewRendered"><iframe src="${url}" sandbox="allow-scripts"></iframe></div>
                 <div id="previewCode" style="display: none;">
                     <pre><code class="language-html">${escapeHtml(decoded)}</code></pre>
                 </div>
@@ -1402,9 +1280,7 @@ async function openFilePreview(file) {
                    ['json', 'xml', 'yaml', 'yml', 'toml'].includes(ext)) {
             modeToggle.style.display = 'none';
             const decoded = atob(content.content);
-            previewContent.innerHTML = `
-                <pre><code class="language-${ext}">${escapeHtml(decoded)}</code></pre>
-            `;
+            previewContent.innerHTML = `<pre><code class="language-${ext}">${escapeHtml(decoded)}</code></pre>`;
             hljs.highlightAll();
             state.currentTextContent = decoded;
         } else {
@@ -1415,15 +1291,13 @@ async function openFilePreview(file) {
                     <h3>لا يمكن معاينة هذا الملف</h3>
                     <p>نوع الملف: ${ext.toUpperCase()}</p>
                     <a href="${content.download_url}" target="_blank" class="btn-sm" style="margin-top: 20px; display: inline-flex;">
-                        <i class="fas fa-download"></i>
-                        تحميل الملف
+                        <i class="fas fa-download"></i> تحميل الملف
                     </a>
                 </div>
             `;
         }
         
         document.getElementById('filePreview').classList.add('active');
-        
     } catch (error) {
         showToast('error', error.message);
     } finally {
@@ -1435,7 +1309,6 @@ function togglePreviewMode(mode) {
     const rendered = document.getElementById('previewRendered');
     const code = document.getElementById('previewCode');
     if (!rendered || !code) return;
-    
     if (mode === 'rendered') {
         rendered.style.display = 'block';
         code.style.display = 'none';
@@ -1453,7 +1326,6 @@ function closePreview() {
     }
 }
 
-// ==================== الأحداث ====================
 function setupEventListeners() {
     document.getElementById('themeToggle').addEventListener('click', () => {
         const current = document.documentElement.getAttribute('data-theme');
@@ -1463,9 +1335,7 @@ function setupEventListeners() {
         updateThemeIcon(newTheme);
     });
     
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-        renderFiles(e.target.value);
-    });
+    document.getElementById('searchInput').addEventListener('input', (e) => renderFiles(e.target.value));
     
     document.querySelectorAll('.view-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1476,10 +1346,7 @@ function setupEventListeners() {
         });
     });
     
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-        loadDirectory(state.currentPath);
-    });
-    
+    document.getElementById('refreshBtn').addEventListener('click', () => loadDirectory(state.currentPath));
     document.getElementById('closePreviewBtn').addEventListener('click', closePreview);
     document.getElementById('copyContentBtn').addEventListener('click', copyContent);
     document.getElementById('downloadFileBtn').addEventListener('click', downloadFile);
@@ -1515,7 +1382,6 @@ function updateThemeIcon(theme) {
     icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
 }
 
-// ==================== أزرار المعاينة ====================
 async function copyContent() {
     if (!state.currentContent) return;
     try {
@@ -1567,7 +1433,6 @@ async function downloadSpecificFile(file) {
     }
 }
 
-// ==================== Breadcrumbs ====================
 function updateBreadcrumbs() {
     const container = document.getElementById('breadcrumbs');
     const parts = state.currentPath ? state.currentPath.split('/') : [];
@@ -1592,11 +1457,8 @@ function updateBreadcrumbs() {
     });
     
     container.innerHTML = html;
-    
     container.querySelectorAll('.breadcrumb-item').forEach(item => {
-        item.addEventListener('click', () => {
-            loadDirectory(item.dataset.path);
-        });
+        item.addEventListener('click', () => loadDirectory(item.dataset.path));
     });
 }
 
@@ -1604,11 +1466,9 @@ function updatePathInfo() {
     const folders = state.files.filter(f => f.type === 'dir').length;
     const files = state.files.filter(f => f.type === 'file').length;
     document.getElementById('itemsCount').textContent = `${folders} مجلد، ${files} ملف`;
-    const path = state.currentPath ? '/' + state.currentPath : '/';
-    document.getElementById('currentPath').textContent = path;
+    document.getElementById('currentPath').textContent = state.currentPath ? '/' + state.currentPath : '/';
 }
 
-// ==================== أدوات مساعدة ====================
 function formatSize(bytes) {
     if (bytes === 0) return '0 B';
     const k = 1024;
@@ -1621,9 +1481,8 @@ function getFileType(ext) {
     const types = {
         html: 'HTML', htm: 'HTML', css: 'CSS', js: 'JavaScript', ts: 'TypeScript',
         py: 'Python', json: 'JSON', md: 'Markdown', txt: 'Text',
-        png: 'PNG Image', jpg: 'JPEG Image', jpeg: 'JPEG Image',
-        gif: 'GIF Image', svg: 'SVG Image', webp: 'WebP Image',
-        zip: 'ZIP Archive', pdf: 'PDF Document'
+        png: 'PNG', jpg: 'JPEG', jpeg: 'JPEG', gif: 'GIF', svg: 'SVG', webp: 'WebP',
+        zip: 'ZIP', pdf: 'PDF'
     };
     return types[ext] || ext.toUpperCase();
 }
@@ -1684,7 +1543,5 @@ function showToast(type, message) {
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
-</script>
-
 </body>
 </html>
