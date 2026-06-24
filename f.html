@@ -835,7 +835,7 @@
     function validateGenerateButton() {
       const countryChosen = countrySelect.value !== '';
       const count = parseInt(contactCount.value);
-      const validCount = !isNaN(count) && count > 0 && count <= 5000;
+      const validCount = !isNaN(count) && count > 0 && count <= 500000000000;
       generateBtn.disabled = !(countryChosen && validCount);
     }
 
