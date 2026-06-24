@@ -3,282 +3,492 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مستعرض ملفات المستودع</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    
+    <title>مستعرض الملفات - GitHub</title>
     <style>
-        :root {
-            --bg-main: #0f172a;
-            --bg-sidebar: #1e293b;
-            --bg-editor: #1e1e1e;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Changa', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            display: flex;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
             overflow: hidden;
         }
 
-        /* شريط الإعدادات العلوي */
-        .top-bar {
-            background-color: var(--bg-sidebar);
-            border-bottom: 1px solid var(--border);
-            padding: 10px 20px;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .top-bar input, .top-bar button {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            outline: none;
-            font-size: 0.9rem;
-        }
-
-        .top-bar input { background-color: var(--bg-main); color: white; width: 220px; }
-        .top-bar button { background-color: var(--accent-color); color: white; cursor: pointer; border: none; font-weight: 600; }
-        .top-bar button:hover { background-color: var(--accent-hover); }
-
-        /* منطقة العمل الرئيسية */
-        .main-layout {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        /* الجانب الأيمن: مستعرض الملفات */
-        .sidebar {
-            width: 300px;
-            background-color: var(--bg-sidebar);
-            border-left: 1px solid var(--border);
-            overflow-y: auto;
-            padding: 15px;
-        }
-
-        .sidebar h3 { font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px; color: var(--accent-color); }
-
-        .file-item {
-            padding: 8px 10px;
-            margin: 4px 0;
-            border-radius: 6px;
-            cursor: pointer;
+        /* ---------- لوحة الإعدادات ---------- */
+        #config-panel {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(13, 17, 23, 0.95);
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            transition: background 0.2s;
+            justify-content: center;
+            z-index: 100;
         }
-        .file-item:hover { background-color: rgba(255,255,255,0.05); }
-        .file-item.folder { color: #f59e0b; font-weight: 600; }
-        .file-item.file { color: #38bdf8; }
-        .file-item.active { background-color: var(--accent-color); color: white; }
-
-        /* الجانب الأيسر: عرض المحتوى */
-        .editor-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-main);
+        #config-box {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
         }
-
-        .editor-header {
-            background-color: #111827;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
+        #config-box h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #58a6ff;
         }
-
-        .current-path { font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-muted); }
-
-        .editor-actions { display: flex; gap: 10px; }
-        .btn-view { background-color: #64748b; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
-        .btn-view:hover { background-color: #475569; }
-
-        /* مساحة العرض لقراءة الأكواد */
-        textarea {
-            flex: 1;
-            background-color: var(--bg-editor);
-            color: #e2e8f0;
-            font-family: 'Fira Code', monospace;
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+            color: #8b949e;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.6rem;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #c9d1d9;
             font-size: 1rem;
-            padding: 20px;
-            border: none;
-            resize: none;
+        }
+        .form-group input:focus {
             outline: none;
-            line-height: 1.5;
+            border-color: #58a6ff;
+        }
+        #connect-btn {
+            width: 100%;
+            padding: 0.7rem;
+            margin-top: 1rem;
+            background: #238636;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #connect-btn:hover { background: #2ea043; }
+        .note {
+            font-size: 0.8rem;
+            color: #8b949e;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* ---------- الواجهة الرئيسية ---------- */
+        #app {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            visibility: hidden;
+        }
+        #sidebar {
+            width: 320px;
+            min-width: 260px;
+            background: #161b22;
+            border-left: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #breadcrumb {
+            padding: 0.8rem;
+            background: #0d1117;
+            border-bottom: 1px solid #30363d;
+            font-size: 0.9rem;
+            word-break: break-all;
+            direction: ltr;
+            text-align: left;
+            min-height: 45px;
+        }
+        #breadcrumb span {
+            color: #58a6ff;
+            cursor: pointer;
+        }
+        #breadcrumb span:hover { text-decoration: underline; }
+        #file-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.7rem;
+            margin: 0.2rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
             direction: ltr;
             text-align: left;
         }
+        .item:hover { background: #1f2937; }
+        .item .icon { margin-right: 0.7rem; font-size: 1.3rem; }
+        .item .name { 
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+        .folder { color: #58a6ff; font-weight: bold; }
+        .loading-text {
+            text-align: center;
+            padding: 1rem;
+            color: #8b949e;
+        }
+        .error-text {
+            color: #f85149;
+            text-align: center;
+            padding: 1rem;
+        }
 
-        .status-msg { font-size: 0.9rem; font-weight: bold; }
+        #preview {
+            flex: 1;
+            background: #0d1117;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #preview-header {
+            padding: 0.6rem 1rem;
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            direction: ltr;
+            text-align: left;
+            color: #8b949e;
+        }
+        #preview-content {
+            flex: 1;
+            overflow: auto;
+            padding: 1rem;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        pre {
+            background: #161b22;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow: auto;
+            direction: ltr;
+            text-align: left;
+            color: #c9d1d9;
+        }
+
+        @media (max-width: 700px) {
+            #app { flex-direction: column; }
+            #sidebar { width: 100%; height: 50%; border-left: none; border-bottom: 1px solid #30363d; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <input type="text" id="ghUser" placeholder="اسم المستخدم على GitHub">
-        <input type="text" id="ghRepo" placeholder="اسم المستودع (Repository)">
-        <button onclick="loadRepository('/')">عرض الملفات والمجلدات</button>
-        <span id="status" class="status-msg"></span>
+<!-- لوحة إعدادات المستودع -->
+<div id="config-panel">
+    <div id="config-box">
+        <h2>⚙️ إعدادات المستودع</h2>
+        <div class="form-group">
+            <label>👤 مالك المستودع</label>
+            <input type="text" id="owner" placeholder="مثال: my-username" value="">
+        </div>
+        <div class="form-group">
+            <label>📦 اسم المستودع</label>
+            <input type="text" id="repo" placeholder="مثال: my-repo" value="">
+        </div>
+        <div class="form-group">
+            <label>🌿 الفرع (branch)</label>
+            <input type="text" id="branch" placeholder="main" value="main">
+        </div>
+        <div class="form-group">
+            <label>🔑 رمز الوصول (اختياري)</label>
+            <input type="password" id="token" placeholder="ghp_...">
+        </div>
+        <button id="connect-btn">🔍 تصفّح المستودع</button>
+        <div class="note">سيتم حفظ الإعدادات في المتصفح</div>
+    </div>
+</div>
+
+<!-- الواجهة الرئيسية -->
+<div id="app">
+    <!-- الشريط الجانبي للملفات -->
+    <div id="sidebar">
+        <div id="breadcrumb"></div>
+        <div id="file-list"></div>
     </div>
 
-    <div class="main-layout">
-        <div class="sidebar">
-            <h3>📁 المجلدات والملفات</h3>
-            <div id="fileTree">
-                <p style="color: var(--text-muted); font-size: 0.9rem;">أدخل بيانات حسابك والمستودع بالأعلى ثم اضغط عرض.</p>
-            </div>
-        </div>
-
-        <div class="editor-container">
-            <div class="editor-header">
-                <div class="current-path" id="currentFilePath">لم يتم اختيار ملف لعرضه بعد</div>
-                <div class="editor-actions">
-                    <button class="btn-view" id="viewHtmlBtn" style="display:none;">👁️ فتح ومعاينة صفحة الـ HTML</button>
-                </div>
-            </div>
-            <textarea id="codeEditor" placeholder="// سيظهر محتوى الملف البرمجي هنا بمجرد اختياره وقراءته..." readonly></textarea>
-        </div>
+    <!-- منطقة المعاينة -->
+    <div id="preview">
+        <div id="preview-header">📄 اختر ملفًا لعرضه</div>
+        <div id="preview-content"></div>
     </div>
+</div>
 
 <script>
-    let currentPath = "";
+    (function() {
+        // العناصر
+        const configPanel = document.getElementById('config-panel');
+        const ownerInput = document.getElementById('owner');
+        const repoInput = document.getElementById('repo');
+        const branchInput = document.getElementById('branch');
+        const tokenInput = document.getElementById('token');
+        const connectBtn = document.getElementById('connect-btn');
+        const appDiv = document.getElementById('app');
+        const breadcrumbDiv = document.getElementById('breadcrumb');
+        const fileListDiv = document.getElementById('file-list');
+        const previewHeader = document.getElementById('preview-header');
+        const previewContent = document.getElementById('preview-content');
 
-    // تذكر البيانات تلقائياً في المتصفح لتسهيل الاستخدام
-    document.getElementById('ghUser').value = localStorage.getItem('gh_user_view') || '';
-    document.getElementById('ghRepo').value = localStorage.getItem('gh_repo_view') || '';
+        // الحالة
+        let owner = '';
+        let repo = '';
+        let branch = 'main';
+        let token = '';
+        let currentPath = '';   // مسار نسبي داخل المستودع
 
-    // دالة جلب الملفات من مستودع GitHub
-    async function loadRepository(path = '/') {
-        const user = document.getElementById('ghUser').value;
-        const repo = document.getElementById('ghRepo').value;
-        const status = document.getElementById('status');
+        // تحميل الإعدادات من localStorage
+        function loadSettings() {
+            const saved = localStorage.getItem('github-browser-settings');
+            if (saved) {
+                try {
+                    const s = JSON.parse(saved);
+                    ownerInput.value = s.owner || '';
+                    repoInput.value = s.repo || '';
+                    branchInput.value = s.branch || 'main';
+                    tokenInput.value = s.token || '';
+                } catch(e) {}
+            }
+        }
+        loadSettings();
 
-        if(!user || !repo) {
-            alert('الرجاء كتابة اسم المستخدم واسم المستودع أولاً.');
-            return;
+        // حفظ الإعدادات
+        function saveSettings() {
+            localStorage.setItem('github-browser-settings', JSON.stringify({
+                owner: owner,
+                repo: repo,
+                branch: branch,
+                token: token
+            }));
         }
 
-        // حفظ البيانات محلياً
-        localStorage.setItem('gh_user_view', user);
-        localStorage.setItem('gh_repo_view', repo);
-
-        status.style.color = "orange";
-        status.textContent = "جاري فتح المجلد...";
-
-        let url = `https://api.github.com/repos/${user}/${repo}/contents${path === '/' ? '' : path}`;
-        
-        try {
-            let response = await fetch(url);
-            if(!response.ok) throw new Error("لم يتم العثور على المستودع، تأكد من الأسماء");
-            let data = await response.json();
-
-            displayFiles(data, path);
-            status.style.color = "#10b981";
-            status.textContent = "تم تحديث القائمة.";
-        } catch (err) {
-            status.style.color = "red";
-            status.textContent = err.message;
+        // بناء الرؤوس
+        function getHeaders() {
+            const headers = { 'Accept': 'application/vnd.github.v3+json' };
+            if (token) headers['Authorization'] = `token ${token}`;
+            return headers;
         }
-    }
 
-    // بناء وعرض هيكل شجرة المجلدات والملفات
-    function displayFiles(items, currentDirPath) {
-        const treeContainer = document.getElementById('fileTree');
-        treeContainer.innerHTML = '';
+        // جلب محتويات مسار (مجلد أو ملف)
+        async function fetchContents(path) {
+            const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+            const res = await fetch(url, { headers: getHeaders() });
+            if (!res.ok) {
+                const msg = res.status === 404 ? 'المسار غير موجود' :
+                            res.status === 403 ? 'تجاوزت الحد المسموح من الطلبات (أضف رمز وصول)' :
+                            `خطأ ${res.status}`;
+                throw new Error(msg);
+            }
+            return res.json();
+        }
 
-        // زر الرجوع للمجلد الأعلى
-        if(currentDirPath !== '/') {
-            const backItem = document.createElement('div');
-            backItem.className = "file-item folder";
-            backItem.innerHTML = "🔙 .. (رجوع للخلف)";
-            backItem.onclick = () => {
-                let parts = currentDirPath.split('/').filter(Boolean);
-                parts.pop();
-                loadRepository('/' + parts.join('/'));
+        // عرض المجلد الحالي
+        async function loadDirectory(path) {
+            fileListDiv.innerHTML = '<div class="loading-text">⏳ جاري تحميل الملفات...</div>';
+            previewHeader.textContent = '📄 اختر ملفًا لعرضه';
+            previewContent.innerHTML = '';
+            try {
+                const data = await fetchContents(path);
+                if (!Array.isArray(data)) {
+                    // مسار يمثل ملف وليس مجلد (نادر)
+                    throw new Error('المسار ليس مجلداً');
+                }
+                renderDirectory(data, path);
+                currentPath = path;
+                updateBreadcrumb(path);
+            } catch (err) {
+                fileListDiv.innerHTML = `<div class="error-text">❌ ${err.message}</div>`;
+            }
+        }
+
+        // عرض عناصر المجلد
+        function renderDirectory(items, parentPath) {
+            if (items.length === 0) {
+                fileListDiv.innerHTML = '<div class="loading-text">📭 هذا المجلد فارغ</div>';
+                return;
+            }
+
+            // ترتيب: المجلدات أولاً ثم الملفات أبجدياً
+            const folders = items.filter(i => i.type === 'dir').sort((a,b) => a.name.localeCompare(b.name));
+            const files = items.filter(i => i.type === 'file').sort((a,b) => a.name.localeCompare(b.name));
+            const sorted = [...folders, ...files];
+
+            let html = '';
+            // رابط العودة للمجلد الأعلى
+            if (parentPath !== '') {
+                const parent = parentPath.substring(0, parentPath.lastIndexOf('/')) || '';
+                html += `<div class="item folder" data-path="${parent}" data-type="dir">
+                    <span class="icon">📁</span><span class="name">.. (المجلد الأعلى)</span>
+                </div>`;
+            }
+
+            sorted.forEach(item => {
+                const icon = item.type === 'dir' ? '📁' : getFileIcon(item.name);
+                html += `<div class="item ${item.type === 'dir' ? 'folder' : ''}" 
+                              data-path="${item.path}" data-type="${item.type}">
+                    <span class="icon">${icon}</span>
+                    <span class="name" title="${item.name}">${item.name}</span>
+                </div>`;
+            });
+
+            fileListDiv.innerHTML = html;
+
+            // إضافة الأحداث
+            fileListDiv.querySelectorAll('.item').forEach(el => {
+                el.addEventListener('click', async () => {
+                    const itemPath = el.dataset.path;
+                    const itemType = el.dataset.type;
+                    if (itemType === 'dir') {
+                        await loadDirectory(itemPath);
+                    } else {
+                        await previewFile(itemPath);
+                    }
+                });
+            });
+
+            // تحذير إذا كانت القائمة مقطوعة (أكثر من 1000 عنصر)
+            if (items.length === 1000) {
+                fileListDiv.innerHTML += '<div class="loading-text">⚠️ قد يوجد المزيد من العناصر (الحد الأقصى 1000).</div>';
+            }
+        }
+
+        // أيقونة حسب الامتداد
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = {
+                html: '🌐', htm: '🌐',
+                css: '🎨', js: '📜', ts: '📘', json: '📋',
+                md: '📝', txt: '📄', pdf: '📕',
+                png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', svg: '🖼️', webp: '🖼️',
+                mp4: '🎬', mp3: '🎵', wav: '🎵', zip: '📦', rar: '📦',
             };
-            treeContainer.appendChild(backItem);
+            return icons[ext] || '📄';
         }
 
-        // فرز العناصر ليظهر المجلد أولاً ثم الملفات
-        items.sort((a, b) => (b.type === 'dir') - (a.type === 'dir'));
+        // معاينة ملف
+        async function previewFile(filePath) {
+            previewHeader.textContent = `📄 ${filePath}`;
+            previewContent.innerHTML = '<div class="loading-text">⏳ جاري تحميل المحتوى...</div>';
+            try {
+                const fileData = await fetchContents(filePath); // تُرجع كائن ملف مع content
+                const ext = filePath.split('.').pop().toLowerCase();
+                const isHtml = ext === 'html' || ext === 'htm';
+                const isImage = ['png','jpg','jpeg','gif','svg','webp','ico'].includes(ext);
+                const isText = ['txt','md','csv','json','xml','css','js','ts','py','java','c','cpp','rb','go','rs','sh','yml','yaml','toml','ini'].includes(ext);
 
-        items.forEach(item => {
+                if (isHtml) {
+                    // فك تشفير base64 وعرض في iframe
+                    const htmlContent = decodeBase64(fileData.content);
+                    const blob = new Blob([htmlContent], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    previewContent.innerHTML = `<iframe sandbox="allow-scripts allow-same-origin" src="${url}"></iframe>`;
+                } else if (isImage) {
+                    // استخدام رابط raw لعرض الصورة
+                    const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
+                    previewContent.innerHTML = `<img src="${rawUrl}" alt="${filePath}">`;
+                } else if (isText || fileData.size < 100000) { 
+                    // عرض النص
+                    const text = decodeBase64(fileData.content);
+                    previewContent.innerHTML = `<pre>${escapeHtml(text)}</pre>`;
+                } else {
+                    previewContent.innerHTML = `<div class="loading-text">⚠️ لا يمكن معاينة هذا النوع من الملفات مباشرة. <br>
+                    <a href="https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}" target="_blank">فتح في تبويب جديد</a></div>`;
+                }
+            } catch (err) {
+                previewContent.innerHTML = `<div class="error-text">❌ ${err.message}</div>`;
+            }
+        }
+
+        // فك base64 (يدعم Unicode)
+        function decodeBase64(str) {
+            const binary = atob(str.replace(/\s/g, ''));
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+            return new TextDecoder('utf-8').decode(bytes);
+        }
+
+        function escapeHtml(text) {
             const div = document.createElement('div');
-            div.className = `file-item ${item.type}`;
-            div.innerHTML = item.type === 'dir' ? `📁 ${item.name}` : `📄 ${item.name}`;
-            
-            if(item.type === 'dir') {
-                // عند الضغط على مجلد يتم الدخول إليه وعرض محتوياته
-                div.onclick = () => loadRepository('/' + item.path);
-            } else {
-                // عند الضغط على ملف يتم تفعيله وفتحه في القارئ
-                div.onclick = () => {
-                    document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
-                    div.classList.add('active');
-                    openFile(item);
-                };
-            }
-            treeContainer.appendChild(div);
-        });
-    }
-
-    // دالة فتح وقراءة الملف المختار
-    async function openFile(fileObject) {
-        const status = document.getElementById('status');
-        
-        status.style.color = "orange";
-        status.textContent = "جاري قراءة الملف...";
-
-        try {
-            let response = await fetch(fileObject.url);
-            let data = await response.json();
-            
-            // فك تشفير المحتوى القادم من سيرفرات GitHub بصيغة Base64 ودعم اللغة العربية
-            let decodedContent = decodeURIComponent(escape(atob(data.content)));
-            
-            document.getElementById('codeEditor').value = decodedContent;
-            document.getElementById('currentFilePath').textContent = fileObject.path;
-            
-            currentPath = fileObject.path;
-            
-            // التعامل مع ملفات الـ HTML لتفعيل زر المعاينة الحية لها
-            const viewBtn = document.getElementById('viewHtmlBtn');
-            if(fileObject.name.endsWith('.html')) {
-                viewBtn.style.display = "inline-block";
-                const user = document.getElementById('ghUser').value;
-                const repo = document.getElementById('ghRepo').value;
-                viewBtn.onclick = () => {
-                    window.open(`https://${user}.github.io/${repo}/${fileObject.path}`, '_blank');
-                };
-            } else {
-                viewBtn.style.display = "none";
-            }
-
-            status.style.color = "#10b981";
-            status.textContent = "تم عرض الملف بنجاح.";
-        } catch (err) {
-            status.style.color = "red";
-            status.textContent = "خطأ أثناء قراءة الملف.";
+            div.textContent = text;
+            return div.innerHTML;
         }
-    }
+
+        // تحديث شريط التنقل
+        function updateBreadcrumb(path) {
+            if (!path) {
+                breadcrumbDiv.innerHTML = '<span data-path="">🏠 الجذر</span>';
+            } else {
+                const parts = path.split('/');
+                let cumulative = '';
+                let html = '<span data-path="">🏠 الجذر</span> / ';
+                parts.forEach((part, i) => {
+                    cumulative += (i === 0 ? '' : '/') + part;
+                    html += `<span data-path="${cumulative}">${part}</span> / `;
+                });
+                breadcrumbDiv.innerHTML = html;
+            }
+            // أحداث الضغط على شريط التنقل
+            breadcrumbDiv.querySelectorAll('span').forEach(span => {
+                span.addEventListener('click', (e) => {
+                    const p = e.target.dataset.path;
+                    loadDirectory(p);
+                });
+            });
+        }
+
+        // بدء التصفح
+        async function startBrowsing() {
+            owner = ownerInput.value.trim();
+            repo = repoInput.value.trim();
+            branch = branchInput.value.trim() || 'main';
+            token = tokenInput.value.trim();
+
+            if (!owner || !repo) {
+                alert('يرجى إدخال اسم المالك واسم المستودع');
+                return;
+            }
+
+            saveSettings();
+            configPanel.style.display = 'none';
+            appDiv.style.visibility = 'visible';
+            await loadDirectory('');
+        }
+
+        // زر الاتصال
+        connectBtn.addEventListener('click', startBrowsing);
+
+        // السماح بالضغط على Enter
+        [ownerInput, repoInput, branchInput, tokenInput].forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') startBrowsing();
+            });
+        });
+
+        // في حال تم إعداد مسبق (يمكن إخفاء اللوحة آلياً لو البيانات موجودة)
+        // لكن الأفضل إظهارها دوماً للتأكيد
+    })();
 </script>
 </body>
 </html>
